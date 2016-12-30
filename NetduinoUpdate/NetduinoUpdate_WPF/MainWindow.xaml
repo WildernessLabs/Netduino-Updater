@@ -1,0 +1,54 @@
+﻿<Window x:Class="NetduinoUpdate.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Netduino Update" Height="260" Width="438" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Loaded="Window_Loaded" Closing="Window_Closing">
+    <Grid Margin="0,0,2,-2">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="eraseAndUploadButton" Content="Upgrade" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="335,185,0,0" Height="25" IsEnabled="False" Click="eraseAndUploadButton_Click"/>
+        <ListView x:Name="devicesListView" HorizontalAlignment="Left" Height="165" VerticalAlignment="Top" Width="400" Margin="10,10,0,0" Grid.ColumnSpan="2" PreviewMouseLeftButtonDown="devicesListView_PreviewMouseLeftButtonDown">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="29">
+                        <GridViewColumnHeader>
+                            <CheckBox Name="AllDevicesSelectedCheckBox" HorizontalAlignment="Left" Checked="AllDevices_CheckChanged" Unchecked="AllDevices_CheckChanged"/>
+                        </GridViewColumnHeader>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox Name="DeviceSelectedCheckBox" Visibility="{Binding CheckBoxVisibility}" HorizontalAlignment="Center" IsChecked="{Binding Path=IsChecked}" Checked="Device_CheckChanged" Unchecked="Device_CheckChanged"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Width="191">
+                        <GridViewColumnHeader Content="Device"/>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=ProductName}"></TextBlock>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Width="100">
+                        <GridViewColumnHeader Content="Upgrade Version"/>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=UpgradeVersion}"></TextBlock>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Width="70">
+                        <GridViewColumnHeader Content="" IsHitTestVisible="False"/>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Name="OptionsHyperlink">
+                                    <Hyperlink NavigateUri="tools:{Binding AdvancedUri}" Click="DeviceOptionsHyperlink_Click">Options...</Hyperlink>
+                                </TextBlock>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ProgressBar x:Name="progressBar" HorizontalAlignment="Left" Height="12" VerticalAlignment="Top" Width="400" Margin="10,163,0,0" Visibility="Collapsed"/>
+    </Grid>
+</Window>

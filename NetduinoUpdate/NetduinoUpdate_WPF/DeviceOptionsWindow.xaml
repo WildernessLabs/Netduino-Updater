@@ -1,0 +1,49 @@
+﻿<Window x:Class="NetduinoUpdate.DeviceOptionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Device Options" Height="300" Width="300" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded" Closing="Window_Closing">
+    <Grid>
+        <TabControl HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Height="251" Width="274">
+            <TabItem x:Name="GeneralTab" Header="General">
+                <Grid Background="#FFE5E5E5">
+                    <Label Content="Product:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                    <ComboBox x:Name="ProductNameComboBox" IsEnabled="False" HorizontalAlignment="Left" Margin="69,10,0,0" VerticalAlignment="Top" Width="189" SelectionChanged="ProductNameComboBox_SelectionChanged"/>
+                    <TextBlock x:Name="ChangeProductHyperlink" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Margin="74,36,0,0">
+                        <Hyperlink Click="ChangeProductHyperlink_Click">Change...</Hyperlink>
+                    </TextBlock>
+                    <TextBlock x:Name="ConfigurationOtpSlotsRemainingLabel1" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,173,0,0" Height="40" Width="248">
+                        NOTE: These settings, stored in non-erasable storage, may be changed up to # more times.
+                    </TextBlock>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="NetworkTab" Header="Network" Visibility="Visible">
+                <Grid Background="#FFE5E5E5">
+                    <Label Content="MAC Address:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="MacAddressTextBox" Margin="99,12,0,0" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="157" IsEnabled="False" KeyDown="MacAddressTextBox_KeyDown" LostFocus="MacAddressTextBox_LostFocus"/>
+                    <TextBlock x:Name="ChangeMacAddressHyperlink" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Margin="104,40,0,0">
+                        <Hyperlink Click="ChangeMacAddressHyperlink_Click">Change...</Hyperlink>
+                    </TextBlock>
+                    <TextBlock x:Name="ConfigurationOtpSlotsRemainingLabel2" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,173,0,0" Height="38" Width="246">
+                        NOTE: These settings, stored in non-erasable storage, may be changed up to # more times.
+                    </TextBlock>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="ToolsTab" Header="Tools">
+                <Grid Background="#FFE5E5E5">
+                    <GroupBox Header="Erase Netduino Application" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,10,0" Height="104">
+                        <Grid HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top">
+                            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,10,-2,0" Height="33" Width="214">
+                                Erase your Netduino Application
+                                <LineBreak/> without affecting firmware or settings.
+                            </TextBlock>
+                            <Button x:Name="EraseDeploymentSectorButton" Content="Erase App..." HorizontalAlignment="Left" VerticalAlignment="Top" Width="91" Margin="10,53,0,0" Height="21" Click="EraseDeploymentSectorButton_Click"/>
+                        </Grid>
+                    </GroupBox>
+                    <ProgressBar x:Name="ProgressBar" HorizontalAlignment="Left" Height="12" VerticalAlignment="Top" Width="268" Margin="0,211,0,0" Visibility="Collapsed"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <Button Content="CancelButton" IsCancel="True" HorizontalAlignment="Left" VerticalAlignment="Top" Opacity="0" Width="0" Height="0" Click="Button_Click"/>
+
+    </Grid>
+</Window>
