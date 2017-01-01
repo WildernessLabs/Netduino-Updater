@@ -5,9 +5,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{6BA77BFF-71F3-4053-AD0F-9277C16603C9}</ProjectGuid>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <UseMSBuildEngine>true</UseMSBuildEngine>
     <OutputType>Library</OutputType>
-    <RootNamespace>NetduinoCoreUsb</RootNamespace>
+    <RootNamespace>WildernessLabs.Netduino</RootNamespace>
     <AssemblyName>NetduinoCoreUsb</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
@@ -29,6 +28,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Device\DeviceInfo.cs" />
+    <Compile Include="Device\Firmware.cs" />
+    <Compile Include="Device\OtpSettings.cs" />
+    <Compile Include="Utils\SrecHexEncoding.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Device\" />
+    <Folder Include="Utils\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>

@@ -20,4 +20,10 @@ Global
 		{6BA77BFF-71F3-4053-AD0F-9277C16603C9}.Release|x86.ActiveCfg = Release|Any CPU
 		{6BA77BFF-71F3-4053-AD0F-9277C16603C9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+		$1.DirectoryNamespaceAssociation = PrefixedHierarchical
+		$1.ResourceNamePolicy = FileFormatDefault
+	EndGlobalSection
 EndGlobal
