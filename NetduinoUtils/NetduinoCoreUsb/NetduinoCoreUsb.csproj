@@ -32,10 +32,22 @@
     <Compile Include="Device\Firmware.cs" />
     <Compile Include="Device\OtpSettings.cs" />
     <Compile Include="Utils\SrecHexEncoding.cs" />
+    <Compile Include="PlatformInvocation\STDFU.cs" />
+    <Compile Include="PlatformInvocation\STDfuDevice.cs" />
+    <Compile Include="PlatformInvocation\Win32Api.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Device\" />
     <Folder Include="Utils\" />
+    <Folder Include="PlatformInvocation\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="PlatformInvocation\STDFU.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PlatformInvocation\STTubeDevice30.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>
