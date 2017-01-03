@@ -5,10 +5,10 @@
 * Windows 8+
 
 # Use Cases (in order of priority)
-* Update Firmware (from internet or local)
+√ Update Firmware (from internet or local)
 * Set network config
-* Check health + info
-* Erase Application/Reset to Vanilla
+√ Check health + info
+√ Erase Application/Reset to Vanilla
 * Deploy applications
 * Unbrick Device
 
