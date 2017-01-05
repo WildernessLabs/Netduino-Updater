@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetduinoFirmwareFlasher.Mac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetduinoCoreUsb", "NetduinoCoreUsb\NetduinoCoreUsb.csproj", "{6BA77BFF-71F3-4053-AD0F-9277C16603C9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsbReader", "UsbReader\UsbReader.csproj", "{9FB063EA-0581-4EE7-8168-71EF90CB4888}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -19,6 +21,10 @@ Global
 		{6BA77BFF-71F3-4053-AD0F-9277C16603C9}.Debug|x86.Build.0 = Debug|Any CPU
 		{6BA77BFF-71F3-4053-AD0F-9277C16603C9}.Release|x86.ActiveCfg = Release|Any CPU
 		{6BA77BFF-71F3-4053-AD0F-9277C16603C9}.Release|x86.Build.0 = Release|Any CPU
+		{9FB063EA-0581-4EE7-8168-71EF90CB4888}.Debug|x86.ActiveCfg = Debug|x86
+		{9FB063EA-0581-4EE7-8168-71EF90CB4888}.Debug|x86.Build.0 = Debug|x86
+		{9FB063EA-0581-4EE7-8168-71EF90CB4888}.Release|x86.ActiveCfg = Release|x86
+		{9FB063EA-0581-4EE7-8168-71EF90CB4888}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
