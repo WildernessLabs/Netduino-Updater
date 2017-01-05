@@ -31,7 +31,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="LibUsbDotNet">
-      <HintPath>..\..\..\..\Downloads\LibUsbDotNet_Bin.2.2.8\LibUsbDotNet.dll</HintPath>
+      <HintPath>ExternalRefs\LibUsbDotNet_Bin.2.2.8\LibUsbDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
