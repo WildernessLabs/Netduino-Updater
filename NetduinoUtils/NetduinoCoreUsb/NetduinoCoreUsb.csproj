@@ -35,6 +35,8 @@
     <Compile Include="PlatformInvocation\STDFU.cs" />
     <Compile Include="PlatformInvocation\STDfuDevice.cs" />
     <Compile Include="PlatformInvocation\Win32Api.cs" />
+    <Compile Include="Device\UsbManager.cs" />
+    <Compile Include="Device\Device.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Device\" />
@@ -48,6 +50,14 @@
     <Content Include="PlatformInvocation\STTubeDevice30.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="LibUsbDotNet">
+      <HintPath>..\packages\LibUsbDotNet.2.2.8\lib\LibUsbDotNet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>
