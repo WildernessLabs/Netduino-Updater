@@ -33,34 +33,41 @@ namespace WildernessLabs.Netduino.Device
 					{
 						Debug.WriteLine(usbDevice.Info.ToString());
 
-
+						// HACK
+						foreach (var id in _knownVendorIDs)
+						{
+							if (usbDevice.Info.ToString().Contains("VendorID:" + id.ToString()){
+								devices.Add(Device.FromUsbDevice(usbDevice));
+								Debug.WriteLine("Found a device");
+							}
+						}
 						//if (_knownVendorIDs.Contains(usbDevice.Profile.DeviceDescriptor.VendorID)
 
 
-						for (int iConfig = 0; iConfig < usbDevice.Configs.Count; iConfig++)
-						{
-							UsbConfigInfo configInfo = usbDevice.Configs[iConfig];
-							//Console.WriteLine(configInfo.ToString());
+						//for (int iConfig = 0; iConfig < usbDevice.Configs.Count; iConfig++)
+						//{
+						//	UsbConfigInfo configInfo = usbDevice.Configs[iConfig];
+						//	//Console.WriteLine(configInfo.ToString());
 
-							ReadOnlyCollection<UsbInterfaceInfo> interfaceList = configInfo.InterfaceInfoList;
-							for (int iInterface = 0; iInterface < interfaceList.Count; iInterface++)
-							{
-								UsbInterfaceInfo interfaceInfo = interfaceList[iInterface];
-								//Console.WriteLine(interfaceInfo.ToString());
+						//	ReadOnlyCollection<UsbInterfaceInfo> interfaceList = configInfo.InterfaceInfoList;
+						//	for (int iInterface = 0; iInterface < interfaceList.Count; iInterface++)
+						//	{
+						//		UsbInterfaceInfo interfaceInfo = interfaceList[iInterface];
+						//		//Console.WriteLine(interfaceInfo.ToString());
 
-								ReadOnlyCollection<UsbEndpointInfo> endpointList = interfaceInfo.EndpointInfoList;
-								for (int iEndpoint = 0; iEndpoint < endpointList.Count; iEndpoint++)
-								{
-									var endpoint = endpointList[iEndpoint];
-									if (endpoint.Descriptor.DescriptorType == LibUsbDotNet.Descriptors.DescriptorType.Device)
-									{
-										Debug.WriteLine(endpointList[iEndpoint].ToString());
+						//		ReadOnlyCollection<UsbEndpointInfo> endpointList = interfaceInfo.EndpointInfoList;
+						//		for (int iEndpoint = 0; iEndpoint < endpointList.Count; iEndpoint++)
+						//		{
+						//			var endpoint = endpointList[iEndpoint];
+						//			if (endpoint.Descriptor.DescriptorType == LibUsbDotNet.Descriptors.DescriptorType.Device)
+						//			{
+						//				Debug.WriteLine(endpointList[iEndpoint].ToString());
 
-									}
+						//			}
 
-								}
-							}
-						}
+						//		}
+						//	}
+						//}
 					}
 				}
 			}
