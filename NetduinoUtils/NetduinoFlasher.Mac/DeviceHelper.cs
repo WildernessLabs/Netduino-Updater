@@ -32,7 +32,7 @@ namespace NetduinoFlasher.Mac
 				{
 					if (!validVendorIDs.Contains(MyUsbDevice.Info.Descriptor.VendorID)) { continue; }
 
-					devices.Add(new Device(MyUsbDevice.Info.ToString()));
+					devices.Add(new Device(MyUsbDevice.Info.ProductString));
 
 					//Console.WriteLine(MyUsbDevice.Info.ToString());
 
@@ -57,7 +57,7 @@ namespace NetduinoFlasher.Mac
 				}
 			}
 
-			UsbDevice.Exit();
+			//UsbDevice.Exit();
 
 			return devices;
 		}
