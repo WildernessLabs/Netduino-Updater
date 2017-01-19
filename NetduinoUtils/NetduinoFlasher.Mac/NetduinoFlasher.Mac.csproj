@@ -8,9 +8,8 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>NetduinoFlasher.Mac</RootNamespace>
     <AssemblyName>NetduinoFlasher.Mac</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
-    <UseXamMacFullFramework>true</UseXamMacFullFramework>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -61,6 +60,7 @@
     <Reference Include="LibUsbDotNet">
       <HintPath>..\packages\LibUsbDotNet.2.2.8\lib\LibUsbDotNet.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
@@ -83,7 +83,6 @@
     <None Include="Info.plist" />
     <None Include="Entitlements.plist" />
     <None Include="packages.config" />
-    <None Include="libusb-1.0.dylib" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -95,13 +94,16 @@
     <Compile Include="Device.cs" />
     <Compile Include="DeviceTableDataSource.cs" />
     <Compile Include="DeviceTableDelegate.cs" />
+    <Compile Include="dfu-sharp.cs" />
+    <Compile Include="Firmware.cs" />
+    <Compile Include="SrexHexEncoding.cs" />
     <Compile Include="DeviceHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />
   </ItemGroup>
   <ItemGroup>
-    <NativeReference Include="libusb-1.0.dylib">
+    <NativeReference Include="refs\libusb-1.0.dylib">
       <Kind>Dynamic</Kind>
       <SmartLink>False</SmartLink>
     </NativeReference>
