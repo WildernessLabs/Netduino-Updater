@@ -25,9 +25,6 @@ namespace NetduinoFlasher.Mac
 		{
 			base.ViewDidLoad();
 			// Do any additional setup after loading the view.
-
-			LoadFirmwareFiles();
-			EraseAndUploadDevice(9);
 		}
 
 		public override NSObject RepresentedObject
@@ -50,9 +47,6 @@ namespace NetduinoFlasher.Mac
 			// Create the Product Table Data Source and populate it
 			var DataSource = new DeviceTableDataSource();
 
-			//DataSource.Devices.Add(new Device("Netduino 2"));
-			//DataSource.Devices.Add(new Device("Netduino 3"));
-
 			DataSource.Devices.AddRange(DeviceHelper.GetAttachedDevices());
 
 			// Populate the Product Table
@@ -62,6 +56,8 @@ namespace NetduinoFlasher.Mac
 
 		private void EraseAndUploadDevice(byte productID)
 		{
+			UpdateStatus.StringValue = "Initializing device...";
+
 			Firmware firmware = _firmwares.SingleOrDefault(x => x.ProductID == productID);
 
 			DfuSharp.Context dfuContext = new Context();
@@ -79,6 +75,8 @@ namespace NetduinoFlasher.Mac
 
 			// TODO: make sure we are in DFU mode; if we are in app mode (runtime) then we need to detach and re-enumerate.
 
+			UpdateStatus.StringValue = "Erasing device...";
+
 			// get our total sectors and block counts
 			List<uint> allSectorBaseAddresses = new List<uint>();
 			//uint totalBlockCount = 0;
@@ -94,9 +92,11 @@ namespace NetduinoFlasher.Mac
 			}
 
 			int totalBytes = 0;
+			string currentFile = string.Empty;
 
 			device.Uploading += (sender, e) =>
 			{
+				UpdateStatus.StringValue = string.Format("Uploading {0} ({1}/{2}", currentFile, e.BytesUploaded, totalBytes);
 				Debug.WriteLine("uploading " + e.BytesUploaded + "/" + totalBytes);
 			};
 
@@ -104,12 +104,15 @@ namespace NetduinoFlasher.Mac
 			{
 				if (region.Filename != null)
 				{
+					
 					System.IO.StreamReader streamReader = new System.IO.StreamReader(firmware.FolderPath + "/" + region.Filename);
 					string hexFileString = streamReader.ReadToEnd();
 					streamReader.Dispose();
 					byte[] hexFileBytes = SrecHexEncoding.GetBytes(hexFileString, region.BaseAddress);
 
 					totalBytes = hexFileBytes.Length;
+					currentFile = region.Filename;
+
 					Debug.WriteLine("uploading " + region.Filename + " " + region.BaseAddress);
 					device.Upload(hexFileBytes, (int)region.BaseAddress);
 				}
@@ -117,16 +120,19 @@ namespace NetduinoFlasher.Mac
 
 			//// step 4: restart board
 			device.SetAddress(0x08000001); // NOTE: for thumb2 instructinos, we added 1 to the "base address".  Otherwise our board will not restart properly.
+
+			UpdateStatus.StringValue = "Firmware update complete";
+
 			//									  // leave DFU mode.
 			////device.LeaveDfuMode();
 		}
 
 		private void LoadFirmwareFiles()
 		{
-			// search for all XML files in our firmware subdirectory, recursively
+			UpdateStatus.StringValue = "Loading files...";			// search for all XML files in our firmware subdirectory, recursively
 
 			// find all folders containing firmware
-			string firmwareRootFolder = @"/Users/briank/Desktop/Firmware";
+			string firmwareRootFolder = @"Firmware";
 			List<string> firmwareFolders = Directory.GetDirectories(firmwareRootFolder, "*.*", SearchOption.AllDirectories).ToList<string>();
 			firmwareFolders.Add(firmwareRootFolder); // be sure to search the root firmware folder, in case the user only has one firmware option.
 
@@ -146,6 +152,12 @@ namespace NetduinoFlasher.Mac
 					}
 				}
 			}
+		}
+
+		partial void ClickedUpdateFirmware(Foundation.NSObject sender)
+		{
+			LoadFirmwareFiles();
+			EraseAndUploadDevice(9);
 		}
 	}
 }

@@ -108,5 +108,11 @@
       <SmartLink>False</SmartLink>
     </NativeReference>
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Firmware\Netduino3Wifi_4_3_2_1\ER_CONFIG.s19" />
+    <BundleResource Include="Resources\Firmware\Netduino3Wifi_4_3_2_1\ER_FLASH.s19" />
+    <BundleResource Include="Resources\Firmware\Netduino3Wifi_4_3_2_1\Netduino3Wifi_4_3_2_1.xml" />
+    <BundleResource Include="Resources\Firmware\Netduino3Wifi_4_3_2_1\Tinybooter.s19" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
 </Project>

@@ -21,7 +21,8 @@ namespace NetduinoFlasher.Mac
 			{
 				0x22B1, // secret labs
 				0x1B9F, // ghi
-				0x05A // who knows
+				0x05A, // who knows
+				0x0483 // bootloader
 			};
 
 			// Dump all devices and descriptor information to console output.

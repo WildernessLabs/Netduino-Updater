@@ -17,17 +17,36 @@ namespace NetduinoFlasher.Mac
 
 		[Outlet]
 		AppKit.NSTableView DeviceTable { get; set; }
+
+		[Outlet]
+		AppKit.NSProgressIndicator UpdateProgress { get; set; }
+
+		[Outlet]
+		AppKit.NSTextField UpdateStatus { get; set; }
+
+		[Action ("ClickedUpdateFirmware:")]
+		partial void ClickedUpdateFirmware (Foundation.NSObject sender);
 		
 		void ReleaseDesignerOutlets ()
 		{
+			if (DeviceName != null) {
+				DeviceName.Dispose ();
+				DeviceName = null;
+			}
+
 			if (DeviceTable != null) {
 				DeviceTable.Dispose ();
 				DeviceTable = null;
 			}
 
-			if (DeviceName != null) {
-				DeviceName.Dispose ();
-				DeviceName = null;
+			if (UpdateProgress != null) {
+				UpdateProgress.Dispose ();
+				UpdateProgress = null;
+			}
+
+			if (UpdateStatus != null) {
+				UpdateStatus.Dispose ();
+				UpdateStatus = null;
 			}
 		}
 	}

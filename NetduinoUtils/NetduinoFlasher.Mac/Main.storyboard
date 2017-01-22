@@ -739,16 +739,39 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
+                            <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vEl-ai-NBb">
+                                <rect key="frame" x="242" y="234" width="139" height="32"/>
+                                <buttonCell key="cell" type="push" title="Update Firmware" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="n5u-qI-j7F">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="ClickedUpdateFirmware:" target="XfG-lQ-9wD" id="npi-gX-Z7g"/>
+                                </connections>
+                            </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="T1G-40-VAK">
+                                <rect key="frame" x="246" y="216" width="229" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="hY0-kP-uKH">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="5xl-Om-fdA" secondAttribute="bottom" id="CAA-Zb-2JU"/>
+                            <constraint firstItem="vEl-ai-NBb" firstAttribute="leading" secondItem="5xl-Om-fdA" secondAttribute="trailing" constant="54" id="UCv-qT-xmA"/>
                             <constraint firstItem="5xl-Om-fdA" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="bvV-6Q-Zfr"/>
                             <constraint firstItem="5xl-Om-fdA" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="m9K-lT-iCD"/>
+                            <constraint firstItem="vEl-ai-NBb" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" id="yKf-DL-dQv"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="DeviceName" destination="1kK-RW-z6W" id="Op6-IL-0xl"/>
                         <outlet property="DeviceTable" destination="lbF-uQ-Fwq" id="MTH-Nk-Ddo"/>
+                        <outlet property="UpdateFirmware" destination="vEl-ai-NBb" id="saz-wK-sE8"/>
+                        <outlet property="UpdateStatus" destination="T1G-40-VAK" id="Y2g-ke-t5U"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
