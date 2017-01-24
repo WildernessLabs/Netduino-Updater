@@ -9,6 +9,7 @@ using DfuSharp;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace NetduinoFlasher.Mac
 {
@@ -56,7 +57,7 @@ namespace NetduinoFlasher.Mac
 
 		private void EraseAndUploadDevice(byte productID)
 		{
-			UpdateStatus.StringValue = "Initializing device...";
+			InvokeOnMainThread(() => UpdateStatus.StringValue = "Initializing device...");
 
 			Firmware firmware = _firmwares.SingleOrDefault(x => x.ProductID == productID);
 
@@ -75,7 +76,7 @@ namespace NetduinoFlasher.Mac
 
 			// TODO: make sure we are in DFU mode; if we are in app mode (runtime) then we need to detach and re-enumerate.
 
-			UpdateStatus.StringValue = "Erasing device...";
+
 
 			// get our total sectors and block counts
 			List<uint> allSectorBaseAddresses = new List<uint>();
@@ -88,6 +89,7 @@ namespace NetduinoFlasher.Mac
 			// erase each sector
 			for (int iSector = 0; iSector < allSectorBaseAddresses.Count; iSector++)
 			{
+				InvokeOnMainThread(() => UpdateStatus.StringValue = "Erasing sector " + (iSector + 1) + " of " + allSectorBaseAddresses.Count);
 				device.EraseSector((int)allSectorBaseAddresses[iSector]);
 			}
 
@@ -96,7 +98,7 @@ namespace NetduinoFlasher.Mac
 
 			device.Uploading += (sender, e) =>
 			{
-				UpdateStatus.StringValue = string.Format("Uploading {0} ({1}/{2}", currentFile, e.BytesUploaded, totalBytes);
+				InvokeOnMainThread(() => UpdateStatus.StringValue = string.Format("Uploading {0} ({1}% complete)", currentFile, (e.BytesUploaded*100/totalBytes)));
 				Debug.WriteLine("uploading " + e.BytesUploaded + "/" + totalBytes);
 			};
 
@@ -121,15 +123,16 @@ namespace NetduinoFlasher.Mac
 			//// step 4: restart board
 			device.SetAddress(0x08000001); // NOTE: for thumb2 instructinos, we added 1 to the "base address".  Otherwise our board will not restart properly.
 
-			UpdateStatus.StringValue = "Firmware update complete";
+			InvokeOnMainThread(() => UpdateStatus.StringValue = "Firmware update complete");
 
 			//									  // leave DFU mode.
 			////device.LeaveDfuMode();
+
 		}
 
 		private void LoadFirmwareFiles()
 		{
-			UpdateStatus.StringValue = "Loading files...";			// search for all XML files in our firmware subdirectory, recursively
+			InvokeOnMainThread(() => UpdateStatus.StringValue = "Loading files...");			// search for all XML files in our firmware subdirectory, recursively
 
 			// find all folders containing firmware
 			string firmwareRootFolder = @"Firmware";
@@ -154,10 +157,21 @@ namespace NetduinoFlasher.Mac
 			}
 		}
 
-		partial void ClickedUpdateFirmware(Foundation.NSObject sender)
+		async partial void ClickedUpdateFirmware(Foundation.NSObject sender)
 		{
-			LoadFirmwareFiles();
-			EraseAndUploadDevice(9);
+			if (DeviceTable.RowCount <= 0)
+			{
+				UpdateStatus.StringValue = "No available device found";
+				return;
+			}
+
+			await Task.Run(() =>
+			{
+				LoadFirmwareFiles();
+				EraseAndUploadDevice(9);
+			});
+
+			UpdateStatus.StringValue = "Update complete";
 		}
 	}
 }

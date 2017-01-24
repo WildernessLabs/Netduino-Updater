@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="15G31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16A323" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
@@ -671,7 +671,7 @@
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ViewController" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                        <rect key="frame" x="0.0" y="0.0" width="818" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5xl-Om-fdA">
@@ -739,8 +739,9 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
-                            <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vEl-ai-NBb">
-                                <rect key="frame" x="242" y="234" width="139" height="32"/>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vEl-ai-NBb">
+                                <rect key="frame" x="260" y="220" width="133" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Update Firmware" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="n5u-qI-j7F">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -750,7 +751,7 @@
                                 </connections>
                             </button>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="T1G-40-VAK">
-                                <rect key="frame" x="246" y="216" width="229" height="17"/>
+                                <rect key="frame" x="393" y="229" width="407" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="hY0-kP-uKH">
                                     <font key="font" metaFont="system"/>
@@ -761,10 +762,8 @@
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="5xl-Om-fdA" secondAttribute="bottom" id="CAA-Zb-2JU"/>
-                            <constraint firstItem="vEl-ai-NBb" firstAttribute="leading" secondItem="5xl-Om-fdA" secondAttribute="trailing" constant="54" id="UCv-qT-xmA"/>
                             <constraint firstItem="5xl-Om-fdA" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="bvV-6Q-Zfr"/>
                             <constraint firstItem="5xl-Om-fdA" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="m9K-lT-iCD"/>
-                            <constraint firstItem="vEl-ai-NBb" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" id="yKf-DL-dQv"/>
                         </constraints>
                     </view>
                     <connections>
@@ -776,7 +775,7 @@
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="75" y="655"/>
+            <point key="canvasLocation" x="244" y="655"/>
         </scene>
     </scenes>
 </document>
