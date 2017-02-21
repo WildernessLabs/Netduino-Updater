@@ -32,10 +32,29 @@ namespace UsbReader
 			{
 				if (usbRegistry.Open(out MyUsbDevice))
 				{
-					if (validVendorIDs.Contains(MyUsbDevice.Info.Descriptor.VendorID))
-					{
+					//if (validVendorIDs.Contains(MyUsbDevice.Info.Descriptor.VendorID))
+					//{
 						Console.WriteLine(MyUsbDevice.Info.ToString());
-					}
+
+						//for (int iConfig = 0; iConfig < MyUsbDevice.Configs.Count; iConfig++)
+						//{
+						//	UsbConfigInfo configInfo = MyUsbDevice.Configs[iConfig];
+						//	Console.WriteLine(configInfo.ToString());
+
+						//	ReadOnlyCollection<UsbInterfaceInfo> interfaceList = configInfo.InterfaceInfoList;
+						//	for (int iInterface = 0; iInterface < interfaceList.Count; iInterface++)
+						//	{
+						//		UsbInterfaceInfo interfaceInfo = interfaceList[iInterface];
+						//		Console.WriteLine(interfaceInfo.ToString());
+
+						//		ReadOnlyCollection<UsbEndpointInfo> endpointList = interfaceInfo.EndpointInfoList;
+						//		for (int iEndpoint = 0; iEndpoint < endpointList.Count; iEndpoint++)
+						//		{
+						//			Console.WriteLine(endpointList[iEndpoint].ToString());
+						//		}
+						//	}
+						//}
+					//}
 					MyUsbDevice.Close();
 				}
 			}

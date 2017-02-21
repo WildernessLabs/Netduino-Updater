@@ -2,18 +2,29 @@
 using System.Collections.Generic;
 using LibUsbDotNet;
 using LibUsbDotNet.Main;
+using NetduinoFlasher.Mac.Models;
 
-namespace NetduinoFlasher.Mac
+namespace NetduinoFlasher.Mac.Managers
 {
-	public class DeviceHelper
+	public class DeviceManager
 	{
-		public DeviceHelper()
+		public DeviceManager()
 		{
 		}
 
 		public static UsbDevice MyUsbDevice;
+		public static List<Device> AttachedDevices { get; set; }
 
 		public static List<Device> GetAttachedDevices()
+		{
+			if (AttachedDevices == null)
+			{
+				AttachedDevices = GetDevices();
+			}
+			return AttachedDevices;
+		}
+
+		private static List<Device> GetDevices()
 		{
 			List<Device> devices = new List<Device>();
 
@@ -33,7 +44,7 @@ namespace NetduinoFlasher.Mac
 				{
 					if (!validVendorIDs.Contains(MyUsbDevice.Info.Descriptor.VendorID)) { continue; }
 
-					devices.Add(new Device(MyUsbDevice.Info.ProductString));
+					devices.Add(new Device(MyUsbDevice.Info.ManufacturerString, MyUsbDevice.Info.ProductString));
 
 					//Console.WriteLine(MyUsbDevice.Info.ToString());
 
@@ -56,11 +67,15 @@ namespace NetduinoFlasher.Mac
 					//	}
 					//}
 				}
+				MyUsbDevice.Close();
 			}
 
-			//UsbDevice.Exit();
-
 			return devices;
+		}
+
+		public static void Exit()
+		{
+			UsbDevice.Exit();
 		}
 	}
 }

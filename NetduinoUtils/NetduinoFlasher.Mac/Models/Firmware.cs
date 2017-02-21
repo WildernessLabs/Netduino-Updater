@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Xml;
 
-namespace NetduinoFlasher.Mac
+namespace NetduinoFlasher.Mac.Models
 {
 	public class Firmware
 	{

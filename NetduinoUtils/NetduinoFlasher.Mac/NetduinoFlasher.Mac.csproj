@@ -61,6 +61,14 @@
       <HintPath>..\packages\LibUsbDotNet.2.2.8\lib\LibUsbDotNet.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetZip">
+      <HintPath>..\packages\DotNetZip.1.10.1\lib\net20\DotNetZip.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
@@ -78,6 +86,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
+    <Folder Include="Managers\" />
+    <Folder Include="Models\" />
+    <Folder Include="Controllers\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -87,17 +98,26 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
-    <Compile Include="ViewController.cs" />
-    <Compile Include="ViewController.designer.cs">
-      <DependentUpon>ViewController.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Device.cs" />
     <Compile Include="DeviceTableDataSource.cs" />
     <Compile Include="DeviceTableDelegate.cs" />
     <Compile Include="dfu-sharp.cs" />
-    <Compile Include="Firmware.cs" />
     <Compile Include="SrexHexEncoding.cs" />
-    <Compile Include="DeviceHelper.cs" />
+<Compile Include="Managers\FirmwareManager.cs" />
+<Compile Include="Managers\DeviceManager.cs" />
+<Compile Include="Models\Firmware.cs" />
+<Compile Include="Models\Device.cs" />
+<Compile Include="Controllers\LeftViewController.cs" />
+<Compile Include="Controllers\LeftViewController.designer.cs">
+  <DependentUpon>LeftViewController.cs</DependentUpon>
+</Compile>
+<Compile Include="Controllers\RightViewController.cs" />
+<Compile Include="Controllers\RightViewController.designer.cs">
+  <DependentUpon>RightViewController.cs</DependentUpon>
+</Compile>
+<Compile Include="Controllers\SplitViewController.cs" />
+<Compile Include="Controllers\SplitViewController.designer.cs">
+  <DependentUpon>SplitViewController.cs</DependentUpon>
+</Compile>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />
@@ -107,12 +127,6 @@
       <Kind>Dynamic</Kind>
       <SmartLink>False</SmartLink>
     </NativeReference>
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\Firmware\Netduino3Wifi_4_3_2_1\ER_CONFIG.s19" />
-    <BundleResource Include="Resources\Firmware\Netduino3Wifi_4_3_2_1\ER_FLASH.s19" />
-    <BundleResource Include="Resources\Firmware\Netduino3Wifi_4_3_2_1\Netduino3Wifi_4_3_2_1.xml" />
-    <BundleResource Include="Resources\Firmware\Netduino3Wifi_4_3_2_1\Tinybooter.s19" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
 </Project>

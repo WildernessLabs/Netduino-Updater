@@ -1,5 +1,6 @@
 ﻿using AppKit;
 using Foundation;
+using NetduinoFlasher.Mac.Managers;
 
 namespace NetduinoFlasher.Mac
 {
@@ -18,6 +19,7 @@ namespace NetduinoFlasher.Mac
 		public override void WillTerminate(NSNotification notification)
 		{
 			// Insert code here to tear down your application
+			DeviceManager.Exit();
 		}
 	}
 }

@@ -38,7 +38,13 @@ namespace NetduinoFlasher.Mac
 			switch (tableColumn.Title)
 			{
 				case "Name":
-					view.StringValue = DataSource.Devices[(int)row].Name;
+					view.StringValue = DataSource.Devices[(int)row].Product;
+					break;
+				case "VendorID":
+					view.IntValue = DataSource.Devices[(int)row].VendorID;
+					break;
+				case "ProductID":
+					view.IntValue = DataSource.Devices[(int)row].ProductID;
 					break;
 
 			}

@@ -173,10 +173,11 @@ namespace DfuSharp
 
 		public event UploadingEventHandler Uploading;
 
-		protected virtual void OnUploaded(UploadingEventArgs e)
+		protected virtual void OnUploading(UploadingEventArgs e)
 		{
-			if (Uploading != null)
-				Uploading(this, e);
+			UploadingEventHandler handler = Uploading;
+			if (handler != null)
+				handler(this, e);
 		}
 
 		public void ClaimInterface()
@@ -300,7 +301,7 @@ namespace DfuSharp
 						Thread.Sleep(100);
 						status = GetStatus(handle, interface_descriptor.bInterfaceNumber);
 					}
-					Uploading(this, new UploadingEventArgs(pos));
+					OnUploading(new UploadingEventArgs(count));
 				}
 			}
 			finally
@@ -500,7 +501,7 @@ namespace DfuSharp
 			NativeMethods.libusb_exit(handle);
 		}
 
-		public List<DfuDevice> GetDfuDevices(ushort idVendor, ushort idProduct)
+		public List<DfuDevice> GetDfuDevices(List<ushort> idVendors)
 		{
 			var list = IntPtr.Zero;
 			var dfu_devices = new List<DfuDevice>();
@@ -521,7 +522,7 @@ namespace DfuSharp
 				if (NativeMethods.libusb_get_device_descriptor(devices[i], ref device_descriptor) != 0)
 					continue;
 
-				if (device_descriptor.idVendor != idVendor && device_descriptor.idProduct != idProduct)
+				if (!idVendors.Contains(device_descriptor.idVendor))
 					continue;
 
 				for (int j = 0; j < device_descriptor.bNumConfigurations; j++)

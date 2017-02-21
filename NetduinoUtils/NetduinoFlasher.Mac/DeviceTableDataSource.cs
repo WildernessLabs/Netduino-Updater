@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AppKit;
+using NetduinoFlasher.Mac.Models;
 
 namespace NetduinoFlasher.Mac
 {
