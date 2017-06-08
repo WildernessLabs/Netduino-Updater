@@ -37,10 +37,19 @@ namespace NetduinoDeploy
 		{
 			base.ViewDidLoad();
 
-			OtpManager otpManager = new OtpManager();
-			var settings = otpManager.GetOtpSettings();
+			DeviceType.RemoveAllItems();
 
-			LoadDeviceList(settings.ProductID);
+			var deviceCount = DfuContext.Current.GetDevices().Count;
+
+			var productId = 0;
+			if (deviceCount == 1)
+			{
+				OtpManager otpManager = new OtpManager();
+				var settings = otpManager.GetOtpSettings();
+				productId = settings.ProductID;
+                LoadDeviceList(productId);
+			}
+
 			LoadForm();
 			await DownloadFirmware();
 		}
