@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -104,6 +105,7 @@ namespace NetduinoDeploy.Managers
 				{
 					device.EraseSector((int)allSectorBaseAddresses[iSector]);
 					eraseProgress = (iSector + 1) * 100 / allSectorBaseAddresses.Count();
+					Debug.WriteLine(CurrentProgress.ToString());
 					RaiseFirmwareUpdateProgress(CurrentProgress.ToString());
 				}
 
@@ -111,6 +113,7 @@ namespace NetduinoDeploy.Managers
 				{
 					uploadedByteCount += e.BytesUploaded;
 					uploadProgress = uploadedByteCount * 100 / totalBytes;
+					Debug.WriteLine(CurrentProgress.ToString());
 					RaiseFirmwareUpdateProgress(CurrentProgress.ToString());
 				};
 
