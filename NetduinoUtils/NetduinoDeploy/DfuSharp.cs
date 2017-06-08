@@ -343,6 +343,84 @@ namespace DfuSharp
 			}
 		}
 
+		public void DownloadOtp(byte[] block)
+		{
+			int size = block.Length;
+
+			var mem = Marshal.AllocHGlobal(size);
+
+			try
+			{
+				ushort transaction = 2;
+  
+                Clear();
+				ClaimInterface();
+                SetInterfaceAltSetting(2);
+                SetAddress(0x1FFF7800);
+				Clear();
+
+				int ret = NativeMethods.libusb_control_transfer(
+														handle,
+														0x80 /*LIBUSB_ENDPOINT_IN*/ | (0x1 << 5) /*LIBUSB_REQUEST_TYPE_CLASS*/ | 0x01 /*LIBUSB_RECIPIENT_INTERFACE*/,
+														2 /*DFU_UPLOAD*/,
+														transaction++,
+														interface_descriptor.bInterfaceNumber,
+														mem,
+														(ushort)size,
+														5000);
+				if (ret < 0)
+					throw new Exception(string.Format("Error with DFU_UPLOAD: {0}", ret));
+
+				Marshal.Copy(mem, block, 0, ret);
+			}
+			finally
+			{
+				Marshal.FreeHGlobal(mem);
+                Clear();
+			}
+		}
+
+		public void UploadOtp(byte[] data)
+		{
+			var mem = Marshal.AllocHGlobal(data.Length);
+
+			try
+			{
+				Clear();
+				ClaimInterface();
+				SetInterfaceAltSetting(2);
+				SetAddress(0x1FFF7800);
+				Clear();
+
+				Marshal.Copy(data, 0, mem, data.Length);
+
+				var ret = NativeMethods.libusb_control_transfer(
+											handle,
+											0x00 /*LIBUSB_ENDPOINT_OUT*/ | (0x1 << 5) /*LIBUSB_REQUEST_TYPE_CLASS*/ | 0x01 /*LIBUSB_RECIPIENT_INTERFACE*/,
+											1 /*DFU_DNLOAD*/,
+											2,
+											interface_descriptor.bInterfaceNumber,
+											mem,
+											(ushort)data.Length,
+											5000);
+
+				if (ret < 0)
+					throw new Exception(string.Format("Error with WRITE_SECTOR: {0}", ret));
+				var status = GetStatus(handle, interface_descriptor.bInterfaceNumber);
+
+				while (status == 4)
+				{
+					Thread.Sleep(100);
+					status = GetStatus(handle, interface_descriptor.bInterfaceNumber);
+				}
+
+			}
+			finally
+			{
+				Marshal.FreeHGlobal(mem);
+			}
+		}
+
 		public void EraseSector(int address)
 		{
 			var mem = Marshal.AllocHGlobal(5);
@@ -494,7 +572,7 @@ namespace DfuSharp
 
 		public void Dispose()
 		{
-			NativeMethods.libusb_exit(handle);
+            NativeMethods.libusb_exit(handle);
 		}
 
 		public List<DfuDevice> GetDfuDevices(List<ushort> idVendors)

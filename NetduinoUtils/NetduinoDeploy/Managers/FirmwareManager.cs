@@ -1,26 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using DfuSharp;
-using NetduinoFlasher.Mac.Models;
 
-namespace NetduinoFlasher.Mac.Managers
+namespace NetduinoDeploy.Managers
 {
 	public class FirmwareManager
 	{
 		public FirmwareManager()
 		{
 		}
-
-		static List<ushort> validVendorIDs = new List<ushort>
-		{
-			0x22B1, // secret labs
-			0x1B9F, // ghi
-			0x05A, // who knows
-			0x0483 // bootloader
-		};
 
 		private double CurrentProgress
 		{
@@ -63,7 +54,7 @@ namespace NetduinoFlasher.Mac.Managers
 			return results;
 		}
 
-		public void EraseAndUploadDevice(int deviceIndex, byte productID)
+		public Task EraseAndUploadDevice(int deviceIndex, byte productID)
 		{
 			int uploadedByteCount = 0;
 			int totalBytes = 0;
@@ -71,9 +62,8 @@ namespace NetduinoFlasher.Mac.Managers
 			List<Firmware> firmwares = LoadFirmwareFiles();
 			Firmware firmware = firmwares.SingleOrDefault(x => x.ProductID == productID);
 
-			using (DfuSharp.Context dfuContext = new Context())
-			{
-				var devices = dfuContext.GetDfuDevices(validVendorIDs);
+
+                var devices = DfuContext.Current.GetDevices();
 
 				if (devices.Count == 0)
 				{
@@ -85,10 +75,10 @@ namespace NetduinoFlasher.Mac.Managers
 				device.SetInterfaceAltSetting(0);
 				device.Clear();
 
-				using (FileStream fs = File.Create("./temp.txt"))
-				{
-					device.Download(fs);
-				}
+				//using (FileStream fs = File.Create("./temp.txt"))
+				//{
+				//	device.Download(fs);
+				//}
 
 
 				//byte productID;
@@ -156,9 +146,9 @@ namespace NetduinoFlasher.Mac.Managers
 				device.SetAddress(0x08000001); // NOTE: for thumb2 instructinos, we added 1 to the "base address".  Otherwise our board will not restart properly.
 				RaiseFirmwareUpdateProgress("Update Complete");
 
-				//									  // leave DFU mode.
-				////device.LeaveDfuMode();
-			}
+			//                                    // leave DFU mode.
+			////device.LeaveDfuMode();
+			return Task.CompletedTask;
 		}
 
 		public delegate void FirmwareUpdateProgressDelegate(string version);
