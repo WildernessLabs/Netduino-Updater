@@ -75,23 +75,18 @@ namespace NetduinoDeploy
 			var productId = Convert.ToByte(Globals.DeviceTypes.SingleOrDefault(x => x.Name == DeviceType.SelectedItem.Title).ProductID);
 
 			FirmwareManager manager = new FirmwareManager();
-			//manager.FirmwareUpdateProgress += (string status) =>
-			//{
-			//	InvokeOnMainThread(() => UpdateFirmwareButton.Title = "Updating... " + status + "%");
-			//};
+			manager.FirmwareUpdateProgress += (string status) =>
+			{
+				InvokeOnMainThread(() => UpdateFirmwareButton.Title = "Updating... " + status + "%");
+			};
 
-			//var productId = Convert.ToByte(Globals.DeviceTypes.SingleOrDefault(x => x.Name == DeviceType.SelectedItem.Title).ProductID);
-
-			//Task.Run(() =>
-			//{
-			//	InvokeOnMainThread(() => UpdateFirmwareButton.Enabled = false);
-			//	manager.EraseAndUploadDevice(0, productId);
-			//	InvokeOnMainThread(() => UpdateFirmwareButton.Title = "Update Firmware");
-			//	InvokeOnMainThread(() => UpdateFirmwareButton.Enabled = true);
-			//});
-			UpdateFirmwareButton.Enabled = false;
-			manager.EraseAndUploadDevice(0, productId);
-			UpdateFirmwareButton.Enabled = true;
+			Task.Run(() =>
+			{
+				InvokeOnMainThread(() => UpdateFirmwareButton.Enabled = false);
+				manager.EraseAndUploadDevice(0, productId);
+				InvokeOnMainThread(() => UpdateFirmwareButton.Title = "Update Firmware");
+				InvokeOnMainThread(() => UpdateFirmwareButton.Enabled = true);
+			});
 		}
 
 		private void LoadDeviceList(int productId = 0)
