@@ -59,6 +59,36 @@ namespace DfuSharp
 
 		[DllImport(LIBUSB_LIBRARY)]
 		internal static extern int libusb_control_transfer(IntPtr dev, byte bmRequestType, byte bRequest, ushort wValue, ushort wIndex, IntPtr data, ushort wLength, uint timeout);
+
+		/// <summary>
+		/// Whether or not the USB supports a particular feature.
+		/// </summary>
+		/// <returns>nonzero if the running library has the capability, 0 otherwise</returns>
+		/// <param name="capability">Capability.</param>
+		[DllImport(LIBUSB_LIBRARY)]
+		internal static extern int libusb_has_capability(Capabilities capability);
+
+	}
+
+	[Flags]
+	public enum Capabilities : uint
+	{
+		/** The libusb_has_capability() API is available. */
+		//LIBUSB_CAP_HAS_CAPABILITY
+		HasCapabilityAPI = 0x0000,
+		/** Hotplug support is available on this platform. */
+		//LIBUSB_CAP_HAS_HOTPLUG
+		SupportsHotPlug = 0x0001,
+		/** The library can access HID devices without requiring user intervention.
+		 * Note that before being able to actually access an HID device, you may
+		 * still have to call additional libusb functions such as
+		 * \ref libusb_detach_kernel_driver(). */
+		//LIBUSB_CAP_HAS_HID_ACCESS
+		SupportsHidDevices = 0x0100,
+		/** The library supports detaching of the default USB driver, using 
+		 * \ref libusb_detach_kernel_driver(), if one is set by the OS kernel */
+		//LIBUSB_CAP_SUPPORTS_DETACH_KERNEL_DRIVER
+		SupportsKernalDriverDetaching = 0x0101
 	}
 
 	struct DeviceDescriptor
@@ -656,6 +686,12 @@ namespace DfuSharp
 
 			return null;
 		}
+
+		public bool HasCapability(Capabilities caps)
+		{
+			return NativeMethods.libusb_has_capability(caps) == 0 ? false : true;
+		}
+
 
 	}
 }

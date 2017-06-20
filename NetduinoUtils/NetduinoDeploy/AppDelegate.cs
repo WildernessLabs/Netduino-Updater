@@ -1,6 +1,7 @@
 ﻿using AppKit;
 using Foundation;
 using NetduinoDeploy.Managers;
+using System.Diagnostics;
 
 namespace NetduinoDeploy
 {
@@ -15,6 +16,17 @@ namespace NetduinoDeploy
         {
             base.AwakeFromNib();
             DfuContext.Init();
+
+
+			bool hasCapsYo = DfuContext.Current.HasCapability(DfuSharp.Capabilities.HasCapabilityAPI);
+			Debug.WriteLine("Has capabilities: " + hasCapsYo.ToString());
+
+			if (hasCapsYo)
+			{
+				bool hazHotPrug = DfuContext.Current.HasCapability(DfuSharp.Capabilities.SupportsHotPlug);
+				Debug.WriteLine("Haz Hotprug? " + hazHotPrug.ToString());
+			}
+
         }
 
 		public override void DidFinishLaunching(NSNotification notification)

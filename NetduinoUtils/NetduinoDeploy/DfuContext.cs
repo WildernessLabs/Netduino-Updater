@@ -35,5 +35,11 @@ namespace NetduinoDeploy
         {
             return _context.GetDfuDevices(validVendorIDs);
         }
+
+		public bool HasCapability(Capabilities caps)
+		{
+			return _context.HasCapability(caps);
+		}
+
     }
 }
