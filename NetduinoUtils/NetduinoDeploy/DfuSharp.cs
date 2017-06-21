@@ -804,7 +804,7 @@ namespace DfuSharp
             IntPtr userData = IntPtr.Zero;
             IntPtr callbackHandle;
 
-            ErrorCodes success = NativeMethods.libusb_hotplug_register_callback(this.handle, HotplugEventType.DeviceArrived | HotplugEventType.DeviceLeft, HotplugFlags.EnumerateNow,
+            ErrorCodes success = NativeMethods.libusb_hotplug_register_callback(this.handle, HotplugEventType.DeviceArrived | HotplugEventType.DeviceLeft, HotplugFlags.DefaultNoFlags,
                                                                     vendorID, productID, deviceClass, this._hotplugCallbackHandler, userData, out callbackHandle);
 
             if (success == ErrorCodes.Success)
@@ -825,5 +825,5 @@ namespace DfuSharp
             // raise the event
             this.DeviceConnected(this, new EventArgs());
         }
-	}
+    }
 }
