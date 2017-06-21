@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace DfuSharp
 {
@@ -19,6 +20,9 @@ namespace DfuSharp
 		Info,
 		Debug
 	}
+
+    public delegate void HotplugCallback(IntPtr ctx, IntPtr device, HotplugEventType eventType, IntPtr userData);
+
 
 	class NativeMethods
 	{
@@ -68,7 +72,41 @@ namespace DfuSharp
 		[DllImport(LIBUSB_LIBRARY)]
 		internal static extern int libusb_has_capability(Capabilities capability);
 
+
+        [DllImport(LIBUSB_LIBRARY)]
+        internal static extern int libusb_hotplug_register_callback(IntPtr ctx, HotplugEventType eventType, int vendorID, 
+                                                                    int productID, int deviceClass, HotplugCallback callback, 
+                                                                    IntPtr userData, out IntPtr callbackHandle);
+        [DllImport(LIBUSB_LIBRARY)]
+        internal static extern void libusb_hotplug_deregister_callback(IntPtr ctx, IntPtr callbackHandle);
+
+   	}
+
+    [Flags]
+	public enum HotplugEventType : uint
+	{
+		/** A device has been plugged in and is ready to use */
+		//LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED
+		DeviceArrived = 0x01,
+
+        /** A device has left and is no longer available.
+         * It is the user's responsibility to call libusb_close on any handle associated with a disconnected device.
+         * It is safe to call libusb_get_device_descriptor on a device that has left */
+        //LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT
+        DeviceLeft = 0x02
 	}
+
+    [Flags]
+    public enum HotplugFlags : uint
+    {
+        /** Default value when not using any flags. */
+        //LIBUSB_HOTPLUG_NO_FLAGS = 0,
+        DefaultNoFlags = 0,
+
+    	/** Arm the callback and fire it for all matching currently attached devices. */
+        //LIBUSB_HOTPLUG_ENUMERATE
+    	EnumerateNow = 1<<0,
+    }
 
 	[Flags]
 	public enum Capabilities : uint
@@ -78,7 +116,7 @@ namespace DfuSharp
 		HasCapabilityAPI = 0x0000,
 		/** Hotplug support is available on this platform. */
 		//LIBUSB_CAP_HAS_HOTPLUG
-		SupportsHotPlug = 0x0001,
+		SupportsHotplug = 0x0001,
 		/** The library can access HID devices without requiring user intervention.
 		 * Note that before being able to actually access an HID device, you may
 		 * still have to call additional libusb functions such as
@@ -590,6 +628,12 @@ namespace DfuSharp
 
 	public class Context : IDisposable
 	{
+        public event EventHandler DeviceConnected = delegate {};
+
+        // doing this here so its lifecycle is tied to the class
+        protected HotplugCallback _hotplugCallbackHandler;
+
+
 		IntPtr handle;
 		public Context(LogLevel debug_level = LogLevel.None)
 		{
@@ -598,6 +642,9 @@ namespace DfuSharp
 			NativeMethods.libusb_set_debug(handle, debug_level);
 			if (ret != 0)
 				throw new Exception(string.Format("Error: {0} while trying to initialize libusb", ret));
+
+            // instantiate our callback handler
+            this._hotplugCallbackHandler = new HotplugCallback(HandleHotplugCallback);
 		}
 
 		public void Dispose()
@@ -692,6 +739,41 @@ namespace DfuSharp
 			return NativeMethods.libusb_has_capability(caps) == 0 ? false : true;
 		}
 
+        public void BeginListeningForHotplugEvents ()
+        {
+            //TODO: Check for device capabilities here. both for general caps, and then hotplug cap
 
+            // create an instance of the delegate to handle the callback
+            // not that there are things about this that i don't understand and we may need to research/implement for 
+            // reliable working. see: https://blogs.msdn.microsoft.com/davidnotario/2006/01/13/gotchas-with-reverse-pinvoke-unmanaged-to-managed-code-callbacks/
+            // and http://www.bambams.ca/2011/05/net-pinvoke-with-managed-callbacks.html
+
+
+            int vendorID = -1; // wildcard match (all)
+            int productID = -1;
+            int deviceClass = -1;
+            IntPtr userData = IntPtr.Zero;
+            IntPtr callbackHandle;
+
+            int success = NativeMethods.libusb_hotplug_register_callback(this.handle, HotplugEventType.DeviceArrived | HotplugEventType.DeviceLeft,
+                                                                    vendorID, productID, deviceClass, this._hotplugCallbackHandler, userData, out callbackHandle);
+
+            if (success == 0)
+            {
+                throw new Exception("callback registration failed");
+            }
+            else
+            {
+                Debug.WriteLine("Callback registration successful");
+            }
+                                                           
+        }
+
+        public void HandleHotplugCallback(IntPtr ctx, IntPtr device, HotplugEventType eventType, IntPtr userData)
+        {
+            Debug.WriteLine("Hotplug Callback called, event type: " + eventType.ToString());
+            // raise the event
+            this.DeviceConnected(this, new EventArgs());
+        }
 	}
 }

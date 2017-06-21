@@ -23,8 +23,10 @@ namespace NetduinoDeploy
 
 			if (hasCapsYo)
 			{
-				bool hazHotPrug = DfuContext.Current.HasCapability(DfuSharp.Capabilities.SupportsHotPlug);
+				bool hazHotPrug = DfuContext.Current.HasCapability(DfuSharp.Capabilities.SupportsHotplug);
 				Debug.WriteLine("Haz Hotprug? " + hazHotPrug.ToString());
+
+                DfuContext.Current.BeginListeningForHotplugEvents();
 			}
 
         }

@@ -41,5 +41,10 @@ namespace NetduinoDeploy
 			return _context.HasCapability(caps);
 		}
 
+        public void BeginListeningForHotplugEvents()
+        {
+            _context.BeginListeningForHotplugEvents();
+        }
+
     }
 }
