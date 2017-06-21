@@ -74,9 +74,10 @@ namespace DfuSharp
 
 
         [DllImport(LIBUSB_LIBRARY)]
-        internal static extern int libusb_hotplug_register_callback(IntPtr ctx, HotplugEventType eventType, int vendorID, 
-                                                                    int productID, int deviceClass, HotplugCallback callback, 
-                                                                    IntPtr userData, out IntPtr callbackHandle);
+        internal static extern ErrorCodes libusb_hotplug_register_callback(IntPtr ctx, HotplugEventType eventType, HotplugFlags flags,
+                                                                    int vendorID, int productID, int deviceClass, 
+                                                                    HotplugCallback callback, IntPtr userData, 
+                                                                    out IntPtr callbackHandle);
         [DllImport(LIBUSB_LIBRARY)]
         internal static extern void libusb_hotplug_deregister_callback(IntPtr ctx, IntPtr callbackHandle);
 
@@ -128,6 +129,54 @@ namespace DfuSharp
 		//LIBUSB_CAP_SUPPORTS_DETACH_KERNEL_DRIVER
 		SupportsKernalDriverDetaching = 0x0101
 	}
+
+    public enum ErrorCodes : int
+    {
+    	/** Success (no error) */
+    	Success = 0,
+
+    	/** Input/output error */
+    	IOError = -1,
+
+    	/** Invalid parameter */
+    	InvalidParamter = -2,
+
+    	/** Access denied (insufficient permissions) */
+    	AccessDenied = -3,
+
+    	/** No such device (it may have been disconnected) */
+    	NoSuchDevice = -4,
+
+    	/** Entity not found */
+    	EntityNotFound = -5,
+
+    	/** Resource busy */
+    	ResourceBusy = -6,
+
+    	/** Operation timed out */
+    	OperationTimedout = -7,
+
+        /** Overflow */
+        Overflow = -8,
+
+    	/** Pipe error */
+    	PipeError = -9,
+
+    	/** System call interrupted (perhaps due to signal) */
+    	SystemCallInterrupted = -10,
+
+        /** Insufficient memory */
+        InsufficientMemory = -11,
+
+    	/** Operation not supported or unimplemented on this platform */
+    	OperationNotSupported = -12,
+
+    	/* NB: Remember to update LIBUSB_ERROR_COUNT below as well as the
+           message strings in strerror.c when adding new error codes here. */
+
+    	/** Other error */
+    	OtherError = -99,
+    };
 
 	struct DeviceDescriptor
 	{
@@ -755,16 +804,17 @@ namespace DfuSharp
             IntPtr userData = IntPtr.Zero;
             IntPtr callbackHandle;
 
-            int success = NativeMethods.libusb_hotplug_register_callback(this.handle, HotplugEventType.DeviceArrived | HotplugEventType.DeviceLeft,
+            ErrorCodes success = NativeMethods.libusb_hotplug_register_callback(this.handle, HotplugEventType.DeviceArrived | HotplugEventType.DeviceLeft, HotplugFlags.EnumerateNow,
                                                                     vendorID, productID, deviceClass, this._hotplugCallbackHandler, userData, out callbackHandle);
 
-            if (success == 0)
+            if (success == ErrorCodes.Success)
             {
-                throw new Exception("callback registration failed");
+                Debug.WriteLine("Callback registration successful");
+
             }
             else
             {
-                Debug.WriteLine("Callback registration successful");
+                throw new Exception("callback registration failed, error: " + success.ToString());
             }
                                                            
         }
