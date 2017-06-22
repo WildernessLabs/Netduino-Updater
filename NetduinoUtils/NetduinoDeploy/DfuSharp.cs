@@ -799,19 +799,22 @@ namespace DfuSharp
                 return;
             }
 
-            //TODO: Check for device capabilities here. both for general caps, and then hotplug cap
+            if (!HasCapability(Capabilities.HasCapabilityAPI))
+            {
+                Debug.WriteLine("Capability API not supported.");
+                return;
+            }
 
-            // create an instance of the delegate to handle the callback
-            // not that there are things about this that i don't understand and we may need to research/implement for 
-            // reliable working. see: https://blogs.msdn.microsoft.com/davidnotario/2006/01/13/gotchas-with-reverse-pinvoke-unmanaged-to-managed-code-callbacks/
-            // and http://www.bambams.ca/2011/05/net-pinvoke-with-managed-callbacks.html
-
+            if (!HasCapability(Capabilities.SupportsHotplug))
+            {
+                Debug.WriteLine("Hotplug notifications not supported.");
+                return;
+            }
 
             int vendorID = -1; // wildcard match (all)
             int productID = -1;
             int deviceClass = -1;
             IntPtr userData = IntPtr.Zero;
-            //IntPtr callbackHandle;
 
             ErrorCodes success = NativeMethods.libusb_hotplug_register_callback(this.handle, HotplugEventType.DeviceArrived | HotplugEventType.DeviceLeft, HotplugFlags.DefaultNoFlags,
                                                                     vendorID, productID, deviceClass, this._hotplugCallbackHandler, userData, out _callbackHandle);
