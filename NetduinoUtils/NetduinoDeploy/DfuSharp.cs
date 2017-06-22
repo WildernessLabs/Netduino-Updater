@@ -682,6 +682,8 @@ namespace DfuSharp
         // doing this here so its lifecycle is tied to the class
         protected HotplugCallback _hotplugCallbackHandler;
 
+        IntPtr _callbackHandle = IntPtr.Zero;
+
 
 		IntPtr handle;
 		public Context(LogLevel debug_level = LogLevel.None)
@@ -698,6 +700,7 @@ namespace DfuSharp
 
 		public void Dispose()
 		{
+            this.StopListeningForHotplugEvents();
             NativeMethods.libusb_exit(handle);
 		}
 
@@ -790,6 +793,12 @@ namespace DfuSharp
 
         public void BeginListeningForHotplugEvents ()
         {
+            if (_callbackHandle != IntPtr.Zero)
+            {
+                Debug.WriteLine("Already listening for events.");
+                return;
+            }
+
             //TODO: Check for device capabilities here. both for general caps, and then hotplug cap
 
             // create an instance of the delegate to handle the callback
@@ -802,21 +811,32 @@ namespace DfuSharp
             int productID = -1;
             int deviceClass = -1;
             IntPtr userData = IntPtr.Zero;
-            IntPtr callbackHandle;
+            //IntPtr callbackHandle;
 
             ErrorCodes success = NativeMethods.libusb_hotplug_register_callback(this.handle, HotplugEventType.DeviceArrived | HotplugEventType.DeviceLeft, HotplugFlags.DefaultNoFlags,
-                                                                    vendorID, productID, deviceClass, this._hotplugCallbackHandler, userData, out callbackHandle);
+                                                                    vendorID, productID, deviceClass, this._hotplugCallbackHandler, userData, out _callbackHandle);
 
             if (success == ErrorCodes.Success)
             {
                 Debug.WriteLine("Callback registration successful");
-
             }
             else
             {
                 throw new Exception("callback registration failed, error: " + success.ToString());
             }
                                                            
+        }
+
+        public void StopListeningForHotplugEvents()
+        {
+            if (_callbackHandle == IntPtr.Zero)
+            {
+                Debug.WriteLine("Not listening already.");
+                return;
+            }
+
+            NativeMethods.libusb_hotplug_deregister_callback(this.handle, this._callbackHandle);
+          
         }
 
         public void HandleHotplugCallback(IntPtr ctx, IntPtr device, HotplugEventType eventType, IntPtr userData)
