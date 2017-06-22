@@ -700,7 +700,7 @@ namespace DfuSharp
 
 		public void Dispose()
 		{
-            this.StopListeningForHotplugEvents();
+            //this.StopListeningForHotplugEvents(); // not needed, they're automatically deregistered in libusb_exit.
             NativeMethods.libusb_exit(handle);
 		}
 
