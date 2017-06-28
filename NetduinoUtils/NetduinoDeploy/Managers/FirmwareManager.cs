@@ -24,6 +24,7 @@ namespace NetduinoDeploy.Managers
 
 		private double eraseProgress = 0;
 		private double uploadProgress = 0;
+		private uint bootloaderBaseAddress = 0x08000000;
 
 		private List<Firmware> LoadFirmwareFiles()
 		{
@@ -55,6 +56,96 @@ namespace NetduinoDeploy.Managers
 			return results;
 		}
 
+		public Task EraseAndUploadDevice(int deviceIndex, int productID, string configPath, string flashPath)
+		{
+			int uploadedByteCount = 0;
+			int totalBytes = 0;
+
+
+			var devices = DfuContext.Current.GetDevices();
+
+			if (devices.Count == 0)
+			{
+				throw new Exception("Device not found");
+			}
+
+			DfuDevice device = devices[deviceIndex];
+			device.ClaimInterface();
+			device.SetInterfaceAltSetting(0);
+			device.Clear();
+
+			var deviceConfig = Globals.DeviceTypes.SingleOrDefault(x => x.ProductID == productID);
+
+			int sectorCount = 0;
+			foreach (var sector in deviceConfig.Sectors)
+			{
+				device.EraseSector((int)sector);
+				eraseProgress = (sectorCount + 1) * 100 / deviceConfig.Sectors.Count();
+				Debug.WriteLine(CurrentProgress.ToString());
+                RaiseFirmwareUpdateProgress(CurrentProgress.ToString());
+				sectorCount++;
+			}
+
+			// get bytes for progress
+
+			using (System.IO.StreamReader streamReader = new System.IO.StreamReader(configPath))
+			{
+				string hexFileString = streamReader.ReadToEnd();
+				byte[] hexFileBytes = SrecHexEncoding.GetBytes(hexFileString, deviceConfig.ConfigBaseAddress);
+				totalBytes += hexFileBytes.Length;
+			}
+
+			using (System.IO.StreamReader streamReader = new System.IO.StreamReader(flashPath))
+			{
+				string hexFileString = streamReader.ReadToEnd();
+				byte[] hexFileBytes = SrecHexEncoding.GetBytes(hexFileString, deviceConfig.FlashBaseAddress);
+				totalBytes += hexFileBytes.Length;
+			}
+
+			// load tinybooter
+
+			using (System.IO.StreamReader streamReader = new System.IO.StreamReader(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Resources), "Tinybooter.s19")))
+			{
+				string hexFileString = streamReader.ReadToEnd();
+				byte[] hexFileBytes = SrecHexEncoding.GetBytes(hexFileString, bootloaderBaseAddress);
+				device.Upload(hexFileBytes, (int)bootloaderBaseAddress);
+			}
+
+			device.Uploading += (sender, e) =>
+			{
+				uploadedByteCount += e.BytesUploaded;
+				uploadProgress = uploadedByteCount * 100 / totalBytes;
+				Debug.WriteLine(CurrentProgress.ToString());
+                RaiseFirmwareUpdateProgress(CurrentProgress.ToString());
+			};
+
+			// load config
+
+			using (System.IO.StreamReader streamReader = new System.IO.StreamReader(configPath))
+			{
+				string hexFileString = streamReader.ReadToEnd();
+				byte[] hexFileBytes = SrecHexEncoding.GetBytes(hexFileString, deviceConfig.ConfigBaseAddress);
+				device.Upload(hexFileBytes, (int)deviceConfig.ConfigBaseAddress);
+			}
+
+			// load flash
+
+			using (System.IO.StreamReader streamReader = new System.IO.StreamReader(flashPath))
+			{
+				string hexFileString = streamReader.ReadToEnd();
+				byte[] hexFileBytes = SrecHexEncoding.GetBytes(hexFileString, deviceConfig.FlashBaseAddress);
+				device.Upload(hexFileBytes, (int)deviceConfig.FlashBaseAddress);
+			}
+
+			//// step 4: restart board
+			device.SetAddress(0x08000001); // NOTE: for thumb2 instructinos, we added 1 to the "base address".  Otherwise our board will not restart properly.
+			RaiseFirmwareUpdateProgress("Update Complete");
+
+			//                                    // leave DFU mode.
+			////device.LeaveDfuMode();
+			return Task.CompletedTask;
+		}
+
 		public Task EraseAndUploadDevice(int deviceIndex, byte productID)
 		{
 			int uploadedByteCount = 0;
@@ -64,90 +155,75 @@ namespace NetduinoDeploy.Managers
 			Firmware firmware = firmwares.SingleOrDefault(x => x.ProductID == productID);
 
 
-                var devices = DfuContext.Current.GetDevices();
+			var devices = DfuContext.Current.GetDevices();
 
-				if (devices.Count == 0)
+			if (devices.Count == 0)
+			{
+				throw new Exception("Device not found");
+			}
+
+			DfuDevice device = devices[deviceIndex];
+			device.ClaimInterface();
+			device.SetInterfaceAltSetting(0);
+			device.Clear();
+
+			// TODO: make sure we are in DFU mode; if we are in app mode (runtime) then we need to detach and re-enumerate.
+
+			// get our total sectors and block counts
+			List<uint> allSectorBaseAddresses = new List<uint>();
+			foreach (Firmware.FirmwareRegion region in firmware.FirmwareRegions)
+			{
+				allSectorBaseAddresses.AddRange(region.SectorBaseAddresses);
+			}
+
+			// erase each sector
+			for (int iSector = 0; iSector < allSectorBaseAddresses.Count; iSector++)
+			{
+				device.EraseSector((int)allSectorBaseAddresses[iSector]);
+				eraseProgress = (iSector + 1) * 100 / allSectorBaseAddresses.Count();
+				Debug.WriteLine(CurrentProgress.ToString());
+				RaiseFirmwareUpdateProgress(CurrentProgress.ToString());
+			}
+
+			device.Uploading += (sender, e) =>
+			{
+				uploadedByteCount += e.BytesUploaded;
+				uploadProgress = uploadedByteCount * 100 / totalBytes;
+				Debug.WriteLine(CurrentProgress.ToString());
+				RaiseFirmwareUpdateProgress(CurrentProgress.ToString());
+			};
+
+			for (int i = 0; i < firmware.FirmwareRegions.Count; i++)
+			{
+				var region = firmware.FirmwareRegions[i];
+				if (region.Filename != null)
 				{
-					throw new Exception("Device not found");
-				}
-
-				DfuDevice device = devices[deviceIndex];
-				device.ClaimInterface();
-				device.SetInterfaceAltSetting(0);
-				device.Clear();
-
-				//using (FileStream fs = File.Create("./temp.txt"))
-				//{
-				//	device.Download(fs);
-				//}
-
-
-				//byte productID;
-				//byte[] macAddress;
-				//byte otpSlotsFree;
-
-				//OtpSettings otpSettings = new OtpSettings(device);
-				//otpSettings.ReadSettings(out productID, out macAddress, out otpSlotsFree);
-
-
-
-				// TODO: make sure we are in DFU mode; if we are in app mode (runtime) then we need to detach and re-enumerate.
-
-				// get our total sectors and block counts
-				List<uint> allSectorBaseAddresses = new List<uint>();
-				foreach (Firmware.FirmwareRegion region in firmware.FirmwareRegions)
-				{
-					allSectorBaseAddresses.AddRange(region.SectorBaseAddresses);
-				}
-
-				// erase each sector
-				for (int iSector = 0; iSector < allSectorBaseAddresses.Count; iSector++)
-				{
-					device.EraseSector((int)allSectorBaseAddresses[iSector]);
-					eraseProgress = (iSector + 1) * 100 / allSectorBaseAddresses.Count();
-					Debug.WriteLine(CurrentProgress.ToString());
-					RaiseFirmwareUpdateProgress(CurrentProgress.ToString());
-				}
-
-				device.Uploading += (sender, e) =>
-				{
-					uploadedByteCount += e.BytesUploaded;
-					uploadProgress = uploadedByteCount * 100 / totalBytes;
-					Debug.WriteLine(CurrentProgress.ToString());
-					RaiseFirmwareUpdateProgress(CurrentProgress.ToString());
-				};
-
-				for (int i = 0; i < firmware.FirmwareRegions.Count; i++)
-				{
-					var region = firmware.FirmwareRegions[i];
-					if (region.Filename != null)
+					using (System.IO.StreamReader streamReader = new System.IO.StreamReader(firmware.FolderPath + "/" + region.Filename))
 					{
-						using (System.IO.StreamReader streamReader = new System.IO.StreamReader(firmware.FolderPath + "/" + region.Filename))
-						{
-							string hexFileString = streamReader.ReadToEnd();
-							byte[] hexFileBytes = SrecHexEncoding.GetBytes(hexFileString, region.BaseAddress);
-							totalBytes += hexFileBytes.Length;
-						}
+						string hexFileString = streamReader.ReadToEnd();
+						byte[] hexFileBytes = SrecHexEncoding.GetBytes(hexFileString, region.BaseAddress);
+						totalBytes += hexFileBytes.Length;
 					}
 				}
+			}
 
-				for (int i = 0; i < firmware.FirmwareRegions.Count; i++)
+			for (int i = 0; i < firmware.FirmwareRegions.Count; i++)
+			{
+				var region = firmware.FirmwareRegions[i];
+				if (region.Filename != null)
 				{
-					var region = firmware.FirmwareRegions[i];
-					if (region.Filename != null)
+					using (System.IO.StreamReader streamReader = new System.IO.StreamReader(firmware.FolderPath + "/" + region.Filename))
 					{
-						using (System.IO.StreamReader streamReader = new System.IO.StreamReader(firmware.FolderPath + "/" + region.Filename))
-						{
-							string hexFileString = streamReader.ReadToEnd();
-							byte[] hexFileBytes = SrecHexEncoding.GetBytes(hexFileString, region.BaseAddress);
-							device.Upload(hexFileBytes, (int)region.BaseAddress);
-						}
+						string hexFileString = streamReader.ReadToEnd();
+						byte[] hexFileBytes = SrecHexEncoding.GetBytes(hexFileString, region.BaseAddress);
+						device.Upload(hexFileBytes, (int)region.BaseAddress);
 					}
 				}
+			}
 
-				//// step 4: restart board
-				device.SetAddress(0x08000001); // NOTE: for thumb2 instructinos, we added 1 to the "base address".  Otherwise our board will not restart properly.
-				RaiseFirmwareUpdateProgress("Update Complete");
+			//// step 4: restart board
+			device.SetAddress(0x08000001); // NOTE: for thumb2 instructinos, we added 1 to the "base address".  Otherwise our board will not restart properly.
+			RaiseFirmwareUpdateProgress("Update Complete");
 
 			//                                    // leave DFU mode.
 			////device.LeaveDfuMode();

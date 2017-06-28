@@ -2,6 +2,10 @@
 using Foundation;
 using NetduinoDeploy.Managers;
 using System.Diagnostics;
+using System.IO;
+using System;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace NetduinoDeploy
 {
@@ -28,6 +32,7 @@ namespace NetduinoDeploy
 
                 DfuContext.Current.BeginListeningForHotplugEvents();
 			}
+
 
         }
 

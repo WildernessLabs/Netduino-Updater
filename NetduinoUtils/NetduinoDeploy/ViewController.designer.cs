@@ -13,7 +13,10 @@ namespace NetduinoDeploy
 	partial class ViewController
 	{
 		[Outlet]
-		AppKit.NSTextField DeviceLabel { get; set; }
+		AppKit.NSTextField ConfigFileLabel { get; set; }
+
+		[Outlet]
+		AppKit.NSButton DeployButton { get; set; }
 
 		[Outlet]
 		AppKit.NSPopUpButton DeviceType { get; set; }
@@ -22,16 +25,25 @@ namespace NetduinoDeploy
 		AppKit.NSTextField FirmwareStatus { get; set; }
 
 		[Outlet]
+		AppKit.NSTextField FlashFileLabel { get; set; }
+
+		[Outlet]
 		AppKit.NSTextField FreeSlots { get; set; }
 
 		[Outlet]
 		AppKit.NSTextField MacAddress { get; set; }
 
 		[Outlet]
+		AppKit.NSTextView Output { get; set; }
+
+		[Outlet]
 		AppKit.NSButton SaveConfigurationButton { get; set; }
 
 		[Outlet]
 		AppKit.NSButtonCell UpdateFirmwareButton { get; set; }
+
+		[Action ("DeployAction:")]
+		partial void DeployAction (Foundation.NSObject sender);
 
 		[Action ("DeviceTypeChanged:")]
 		partial void DeviceTypeChanged (Foundation.NSObject sender);
@@ -47,14 +59,29 @@ namespace NetduinoDeploy
 		
 		void ReleaseDesignerOutlets ()
 		{
-			if (DeviceLabel != null) {
-				DeviceLabel.Dispose ();
-				DeviceLabel = null;
+			if (ConfigFileLabel != null) {
+				ConfigFileLabel.Dispose ();
+				ConfigFileLabel = null;
+			}
+
+			if (DeployButton != null) {
+				DeployButton.Dispose ();
+				DeployButton = null;
 			}
 
 			if (DeviceType != null) {
 				DeviceType.Dispose ();
 				DeviceType = null;
+			}
+
+			if (FirmwareStatus != null) {
+				FirmwareStatus.Dispose ();
+				FirmwareStatus = null;
+			}
+
+			if (FlashFileLabel != null) {
+				FlashFileLabel.Dispose ();
+				FlashFileLabel = null;
 			}
 
 			if (FreeSlots != null) {
@@ -67,6 +94,11 @@ namespace NetduinoDeploy
 				MacAddress = null;
 			}
 
+			if (Output != null) {
+				Output.Dispose ();
+				Output = null;
+			}
+
 			if (SaveConfigurationButton != null) {
 				SaveConfigurationButton.Dispose ();
 				SaveConfigurationButton = null;
@@ -75,11 +107,6 @@ namespace NetduinoDeploy
 			if (UpdateFirmwareButton != null) {
 				UpdateFirmwareButton.Dispose ();
 				UpdateFirmwareButton = null;
-			}
-
-			if (FirmwareStatus != null) {
-				FirmwareStatus.Dispose ();
-				FirmwareStatus = null;
 			}
 		}
 	}

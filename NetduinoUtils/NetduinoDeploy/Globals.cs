@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace NetduinoDeploy
 {
@@ -7,13 +9,11 @@ namespace NetduinoDeploy
     {
         static Globals()
 		{
-			DeviceTypes = new List<Device>();
-			DeviceTypes.Add(new Device() { ProductID = 4, Name = "Netduino Go" });
-            DeviceTypes.Add(new Device() { ProductID = 5, Name = "Netduino Plus 2" });
-            DeviceTypes.Add(new Device() { ProductID = 6, Name = "Netduino 2" });
-            DeviceTypes.Add(new Device() { ProductID = 7, Name = "Netduino 3" });
-            DeviceTypes.Add(new Device() { ProductID = 8, Name = "Netduino 3 Ethernet" });
-            DeviceTypes.Add(new Device() { ProductID = 9, Name = "Netduino 3 Wifi" });
+			using (TextReader tr = File.OpenText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Resources), "devices.json")))
+			{
+				var data = tr.ReadToEnd();
+				DeviceTypes = JsonConvert.DeserializeObject<List<Device>>(data);
+			}
         }
 
         public static List<Device> DeviceTypes { get; set; }

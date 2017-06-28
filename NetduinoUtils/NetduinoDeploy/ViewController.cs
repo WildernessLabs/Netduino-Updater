@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AppKit;
 using DfuSharp;
@@ -20,6 +21,10 @@ namespace NetduinoDeploy
 	{
 		int _selectedDeviceIndex = 0;
 		string firmwareStatusUrl = "http://www.netduino.com/firmware_version.json";
+		string configFile = string.Empty;
+		string flashFile = string.Empty;
+
+		Regex macAddressRegex = new Regex("^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$");
 
 		public ViewController(IntPtr handle) : base(handle)
 		{
@@ -37,9 +42,8 @@ namespace NetduinoDeploy
 		{
 			base.ViewDidLoad();
 
-			DeviceType.RemoveAllItems();
-
 			var deviceCount = DfuContext.Current.GetDevices().Count;
+			DeployButton.Enabled = false;
 
 			var productId = 0;
 			if (deviceCount == 1)
@@ -51,6 +55,7 @@ namespace NetduinoDeploy
 			}
 
 			LoadForm();
+			MacAddress.Changed += MacAddress_Changed;
 			await DownloadFirmware();
 		}
 
@@ -61,6 +66,7 @@ namespace NetduinoDeploy
 			settings.MacAddress = MacAddress.StringValue.Split(':').Select(x => Convert.ToByte(x, 16)).ToArray();
 			OtpManager manager = new OtpManager();
 			manager.SaveOtpSettings(settings);
+			OutputToConsole("Configuration saved successfully");
 			LoadForm();
 		}
 
@@ -82,17 +88,19 @@ namespace NetduinoDeploy
 
 			Task.Run(() =>
 			{
+                InvokeOnMainThread(() => OutputToConsole("Started firmware update"));
 				InvokeOnMainThread(() => UpdateFirmwareButton.Enabled = false);
 				manager.EraseAndUploadDevice(0, productId);
+
 				InvokeOnMainThread(() => UpdateFirmwareButton.Title = "Update Firmware");
 				InvokeOnMainThread(() => UpdateFirmwareButton.Enabled = true);
+				InvokeOnMainThread(() => OutputToConsole("Finished firmware update"));
+
 			});
 		}
 
 		private void LoadDeviceList(int productId = 0)
 		{
-			DeviceLabel.StringValue = string.Empty;
-
 			DeviceType.RemoveAllItems();
 			DeviceType.AddItem("[Select Device Type]");
 
@@ -121,12 +129,11 @@ namespace NetduinoDeploy
 
 			if (deviceCount == 0)
 			{
-				DeviceLabel.StringValue = "Please connect a device in bootloader mode";
-
+				OutputToConsole("Please connect a device in bootloader mode and restart the application");
 			}
 			else if (deviceCount > 1)
 			{
-				DeviceLabel.StringValue = "Please connect only one device in bootloader mode.";
+				OutputToConsole("Please connect only one device in bootloader mode and restart the application");
 			}
 			else if (_selectedDeviceIndex == 0)
 			{
@@ -145,22 +152,61 @@ namespace NetduinoDeploy
 					MacAddress.StringValue = BitConverter.ToString(settings.MacAddress).Replace('-', ':');
 					FreeSlots.StringValue = string.Format("Device settings can be saved {0} more time{1}", settings.FreeSlots, settings.FreeSlots > 1 ? "s" : "");
 
-					SaveConfigurationButton.Enabled = true;
+					SaveConfigurationButton.Enabled = settings.FreeSlots > 0;
+
 					MacAddress.Enabled = true;
 
 					if (settings.ProductID > 0)
 					{
 						UpdateFirmwareButton.Enabled = true;
 					}
-
 				}
-
 			}
+		}
+
+
+		void MacAddress_Changed(object sender, EventArgs e)
+		{
+			var result = macAddressRegex.Match(MacAddress.StringValue);
+			SaveConfigurationButton.Enabled = result.Success;
 		}
 
 		partial void SelectFolderAction(NSObject sender)
 		{
+			var dlg = NSOpenPanel.OpenPanel;
+			dlg.CanChooseFiles = true;
+			dlg.CanChooseDirectories = true;
+			dlg.AllowedFileTypes = new string[] { "hex", "s19" };
+			dlg.AllowsMultipleSelection = true;
 
+			if (dlg.RunModal () == 1) {
+
+				if (dlg.Urls.SingleOrDefault(x => x.Path.ToLower().Contains("er_config"))?.Path != null)
+				{
+					configFile = dlg.Urls.SingleOrDefault(x => x.Path.ToLower().Contains("er_config"))?.Path;
+				}
+
+				if (dlg.Urls.SingleOrDefault(x => x.Path.ToLower().Contains("er_flash"))?.Path != null)
+				{
+					flashFile = dlg.Urls.SingleOrDefault(x => x.Path.ToLower().Contains("er_flash"))?.Path;
+				}
+
+				ConfigFileLabel.StringValue = configFile ?? string.Empty;
+				FlashFileLabel.StringValue = flashFile ?? string.Empty;
+
+				int maxLen = 45;
+				if (ConfigFileLabel.StringValue.Length > maxLen)
+				{
+					ConfigFileLabel.StringValue = "..." + configFile.Substring(configFile.Length - maxLen);
+				}
+
+				if (FlashFileLabel.StringValue.Length > maxLen)
+				{
+					FlashFileLabel.StringValue = "..." + flashFile.Substring(flashFile.Length - maxLen);
+				}
+
+				DeployButton.Enabled = (!string.IsNullOrEmpty(configFile) && !string.IsNullOrEmpty(flashFile));
+			}
 		}
 
 		public override NSObject RepresentedObject
@@ -184,7 +230,7 @@ namespace NetduinoDeploy
 			string firmwareVersion = string.Empty;
 			string firmwareFilename = string.Empty;
 
-            InvokeOnMainThread(() => FirmwareStatus.StringValue = "Checking for firmware updates" );
+            OutputToConsole("Checking for firmware updates");
 			// check for firmware update
 			while (true)
 			{
@@ -195,11 +241,11 @@ namespace NetduinoDeploy
 					firmwareDownloadUrl = firmwareUpdate["url"].ToString();
 					firmwareFilename = Path.GetFileName(firmwareDownloadUrl);
 					firmwareVersion = firmwareUpdate["version"].ToString();
-					//RaiseFirmwareVersionChecked(firmwareVersion);
 					break;
 				}
 				catch (Exception ex)
 				{
+                    OutputToConsole("HTTP connection timeout, retrying...");
 					retryCount++;
 					await Task.Delay(10000);
 				}
@@ -214,11 +260,11 @@ namespace NetduinoDeploy
 
 			if (File.Exists(Path.Combine(workingPath, firmwareFilename)))
 			{
-                //RaiseFirmwareVersionChecked(firmwareVersion);
-			}
+                OutputToConsole("No firmware updates found");
+  			}
 			else
 			{
-                InvokeOnMainThread(() => FirmwareStatus.StringValue = "Downloading latest firmware" );
+				OutputToConsole("Started firmware download");
 				// download firmware update
 				while (true)
 				{
@@ -227,26 +273,64 @@ namespace NetduinoDeploy
 					{
 						WebClient webClient = new WebClient();
 						await webClient.DownloadFileTaskAsync(new Uri(firmwareDownloadUrl), Path.Combine(workingPath, firmwareFilename));
-						Debug.WriteLine("downloaded");
-
+						OutputToConsole("Finished firmware download");
 						using (ZipFile zip = ZipFile.Read(Path.Combine(workingPath, firmwareFilename)))
 						{
 							zip.ExtractAll(workingPath);
 						}
 
-						//RaiseFirmwareVersionChecked(firmwareVersion);
 						break;
 					}
 					catch (Exception ex)
 					{
-						Debug.WriteLine("retrying download" + retryCount);
+                        OutputToConsole("HTTP connection timeout, retrying...");
 						retryCount++;
 						await Task.Delay(10000);
 					}
 				}
 			}
 
-			InvokeOnMainThread(() => FirmwareStatus.StringValue = string.Format("Latest firmware downloaded ({0})", firmwareVersion) );
+			InvokeOnMainThread(() => FirmwareStatus.StringValue = string.Format("Firmware downloaded ({0})", firmwareVersion) );
+		}
+
+		private void OutputToConsole(string message)
+		{
+			if (string.IsNullOrEmpty(Output.Value))
+			{
+				Output.Value = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + " - " + message;
+			}
+			else
+			{
+				Output.Value = Output.Value + System.Environment.NewLine + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + " - " + message;
+			}
+
+		}
+
+		partial void DeployAction(NSObject sender)
+		{
+			var productId = Convert.ToByte(Globals.DeviceTypes.SingleOrDefault(x => x.Name == DeviceType.SelectedItem.Title).ProductID);
+
+			FirmwareManager manager = new FirmwareManager();
+			manager.FirmwareUpdateProgress += (string status) =>
+			{
+				InvokeOnMainThread(() => DeployButton.Title = "Deploying... " + status + "%");
+			};
+
+			Task.Run(() =>
+			{
+				InvokeOnMainThread(() => DeployButton.Enabled = false);
+                InvokeOnMainThread(() => OutputToConsole("Started deploy"));
+
+				if (!string.IsNullOrEmpty(configFile) && !string.IsNullOrEmpty(flashFile))
+				{
+					manager.EraseAndUploadDevice(0, productId, configFile, flashFile);
+				}
+
+				InvokeOnMainThread(() => DeployButton.Title = "Deploy");
+				InvokeOnMainThread(() => DeployButton.Enabled = true);
+				InvokeOnMainThread(() => OutputToConsole("Finished deploy"));
+
+			});
 		}
 	}
 }
