@@ -51,7 +51,11 @@ namespace NetduinoDeploy
 				OtpManager otpManager = new OtpManager();
 				var settings = otpManager.GetOtpSettings();
 				productId = settings.ProductID;
-                LoadDeviceList(productId);
+				LoadDeviceList(productId);
+			}
+			else
+			{
+				LoadDeviceList();
 			}
 
 			LoadForm();
@@ -154,7 +158,7 @@ namespace NetduinoDeploy
 
 					SaveConfigurationButton.Enabled = settings.FreeSlots > 0;
 
-					MacAddress.Enabled = true;
+					MacAddress.Enabled = deviceType.HasMacAddress;
 
 					if (settings.ProductID > 0)
 					{
