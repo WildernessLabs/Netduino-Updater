@@ -295,13 +295,14 @@ namespace NetduinoDeploy
 
 		private void OutputToConsole(string message)
 		{
+			string dateFormat = "MMM d h:mm:ss tt";
 			if (string.IsNullOrEmpty(Output.Value))
 			{
-				Output.Value = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + " - " + message;
+				Output.Value = DateTime.Now.ToString(dateFormat) + " - " + message;
 			}
 			else
 			{
-				Output.Value = Output.Value + System.Environment.NewLine + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + " - " + message;
+				Output.Value = Output.Value + System.Environment.NewLine + DateTime.Now.ToString(dateFormat) + " - " + message;
 			}
 
 		}
