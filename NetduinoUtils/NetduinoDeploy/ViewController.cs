@@ -175,7 +175,7 @@ namespace NetduinoDeploy
 		{
 			var dlg = NSOpenPanel.OpenPanel;
 			dlg.CanChooseFiles = true;
-			dlg.CanChooseDirectories = true;
+			dlg.CanChooseDirectories = false;
 			dlg.AllowedFileTypes = new string[] { "hex", "s19" };
 			dlg.AllowsMultipleSelection = true;
 
