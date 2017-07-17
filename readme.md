@@ -24,7 +24,7 @@ A simple application to automatically deploy latest official firmware, or manual
 
 ## Current Pre-Release
 
-* [v0.1.0pre](/releases/latest)
+* [v0.1.0pre](https://github.com/WildernessLabs/Netduino-Updater/releases/tag/v0.1.0pre)
 
 ### Known Issues
 
