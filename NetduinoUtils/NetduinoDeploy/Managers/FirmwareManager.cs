@@ -56,7 +56,7 @@ namespace NetduinoDeploy.Managers
 			return results;
 		}
 
-		public Task EraseAndUploadDevice(int deviceIndex, int productID, string configPath, string flashPath)
+		public Task EraseAndUploadDevice(int deviceIndex, int productID, string configPath, string flashPath, string bootFile)
 		{
 			int uploadedByteCount = 0;
 			int totalBytes = 0;
@@ -104,7 +104,7 @@ namespace NetduinoDeploy.Managers
 
 			// load tinybooter
 
-			using (System.IO.StreamReader streamReader = new System.IO.StreamReader(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Resources), "Tinybooter.s19")))
+			using (System.IO.StreamReader streamReader = new System.IO.StreamReader(bootFile))
 			{
 				string hexFileString = streamReader.ReadToEnd();
 				byte[] hexFileBytes = SrecHexEncoding.GetBytes(hexFileString, bootloaderBaseAddress);

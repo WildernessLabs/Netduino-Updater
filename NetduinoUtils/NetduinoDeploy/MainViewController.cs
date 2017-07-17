@@ -17,16 +17,17 @@ using Newtonsoft.Json.Linq;
 
 namespace NetduinoDeploy
 {
-	public partial class ViewController : NSViewController
+	public partial class MainViewController : NSViewController
 	{
 		int _selectedDeviceIndex = 0;
 		string firmwareStatusUrl = "http://www.netduino.com/firmware_version.json";
 		string configFile = string.Empty;
 		string flashFile = string.Empty;
+		string bootFile = string.Empty;
 
 		Regex macAddressRegex = new Regex("^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$");
 
-		public ViewController(IntPtr handle) : base(handle)
+		public MainViewController(IntPtr handle) : base(handle)
 		{
 		}
 
@@ -195,8 +196,14 @@ namespace NetduinoDeploy
 					flashFile = dlg.Urls.SingleOrDefault(x => x.Path.ToLower().Contains("er_flash"))?.Path;
 				}
 
+				if (dlg.Urls.SingleOrDefault(x => x.Path.ToLower().Contains("tinybooter"))?.Path != null)
+				{
+					bootFile = dlg.Urls.SingleOrDefault(x => x.Path.ToLower().Contains("tinybooter"))?.Path;
+				}
+
 				ConfigFileLabel.StringValue = configFile ?? string.Empty;
 				FlashFileLabel.StringValue = flashFile ?? string.Empty;
+				BootFileLabel.StringValue = bootFile ?? string.Empty;
 
 				int maxLen = 45;
 				if (ConfigFileLabel.StringValue.Length > maxLen)
@@ -209,7 +216,12 @@ namespace NetduinoDeploy
 					FlashFileLabel.StringValue = "..." + flashFile.Substring(flashFile.Length - maxLen);
 				}
 
-				DeployButton.Enabled = (!string.IsNullOrEmpty(configFile) && !string.IsNullOrEmpty(flashFile));
+				if (BootFileLabel.StringValue.Length > maxLen)
+				{
+					BootFileLabel.StringValue = "..." + bootFile.Substring(flashFile.Length - maxLen);
+				}
+
+				DeployButton.Enabled = (!string.IsNullOrEmpty(configFile) && !string.IsNullOrEmpty(flashFile) && !string.IsNullOrEmpty(bootFile));
 			}
 		}
 
@@ -328,7 +340,7 @@ namespace NetduinoDeploy
 
 				if (!string.IsNullOrEmpty(configFile) && !string.IsNullOrEmpty(flashFile))
 				{
-					manager.EraseAndUploadDevice(0, productId, configFile, flashFile);
+					manager.EraseAndUploadDevice(0, productId, configFile, flashFile, bootFile);
 				}
 
 				InvokeOnMainThread(() => DeployButton.Title = "Deploy");

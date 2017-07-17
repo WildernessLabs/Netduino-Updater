@@ -9,9 +9,12 @@ using System.CodeDom.Compiler;
 
 namespace NetduinoDeploy
 {
-	[Register ("ViewController")]
-	partial class ViewController
+	[Register ("MainViewController")]
+	partial class MainViewController
 	{
+		[Outlet]
+		AppKit.NSTextField BootFileLabel { get; set; }
+
 		[Outlet]
 		AppKit.NSTextField ConfigFileLabel { get; set; }
 
@@ -107,6 +110,11 @@ namespace NetduinoDeploy
 			if (UpdateFirmwareButton != null) {
 				UpdateFirmwareButton.Dispose ();
 				UpdateFirmwareButton = null;
+			}
+
+			if (BootFileLabel != null) {
+				BootFileLabel.Dispose ();
+				BootFileLabel = null;
 			}
 		}
 	}
