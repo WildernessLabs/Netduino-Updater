@@ -55,3 +55,7 @@ A simple application to automatically deploy latest official firmware, or manual
  ![](Support_Files/MacDeploy_SelectedFirmwareFiles.png)
  3. Click `Deploy` and it should deploy the firmware:
  ![](Support_Files/MacDeploy_ManuallyUpdatingFirmware.png)
+ 
+# Windows
+
+[Content coming soon]
