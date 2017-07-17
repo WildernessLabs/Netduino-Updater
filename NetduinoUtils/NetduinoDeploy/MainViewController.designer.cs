@@ -9,8 +9,8 @@ using System.CodeDom.Compiler;
 
 namespace NetduinoDeploy
 {
-	[Register ("MainViewController")]
-	partial class MainViewController
+	[Register ("ViewController")]
+	partial class ViewController
 	{
 		[Outlet]
 		AppKit.NSTextField BootFileLabel { get; set; }
