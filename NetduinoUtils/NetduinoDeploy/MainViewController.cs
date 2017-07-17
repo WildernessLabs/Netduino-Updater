@@ -17,7 +17,7 @@ using Newtonsoft.Json.Linq;
 
 namespace NetduinoDeploy
 {
-	public partial class MainViewController : NSViewController
+	public partial class ViewController : NSViewController
 	{
 		int _selectedDeviceIndex = 0;
 		string firmwareStatusUrl = "http://www.netduino.com/firmware_version.json";
@@ -27,7 +27,7 @@ namespace NetduinoDeploy
 
 		Regex macAddressRegex = new Regex("^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$");
 
-		public MainViewController(IntPtr handle) : base(handle)
+		public ViewController(IntPtr handle) : base(handle)
 		{
 		}
 
