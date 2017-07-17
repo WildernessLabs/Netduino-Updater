@@ -118,6 +118,7 @@
 <Compile Include="Controllers\SplitViewController.designer.cs">
   <DependentUpon>SplitViewController.cs</DependentUpon>
 </Compile>
+<Compile Include="OtpSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />
