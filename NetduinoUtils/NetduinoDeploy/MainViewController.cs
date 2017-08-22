@@ -95,12 +95,16 @@ namespace NetduinoDeploy
 			{
                 InvokeOnMainThread(() => OutputToConsole("Started firmware update"));
 				InvokeOnMainThread(() => UpdateFirmwareButton.Enabled = false);
-				manager.EraseAndUploadDevice(0, productId);
-
-				InvokeOnMainThread(() => UpdateFirmwareButton.Title = "Update Firmware");
-				InvokeOnMainThread(() => UpdateFirmwareButton.Enabled = true);
+				try {
+					manager.EraseAndUploadDevice(0, productId);
+				} catch (Exception e) {
+					InvokeOnMainThread(() => OutputToConsole("Firmware update failed:\n" + e));
+					return;
+				} finally {
+					InvokeOnMainThread(() => UpdateFirmwareButton.Title = "Update Firmware");
+					InvokeOnMainThread(() => UpdateFirmwareButton.Enabled = true);
+				}
 				InvokeOnMainThread(() => OutputToConsole("Finished firmware update"));
-
 			});
 		}
 

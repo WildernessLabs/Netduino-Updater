@@ -16,6 +16,11 @@ namespace NetduinoDeploy
 		{
 		}
 
+		public override bool ApplicationShouldTerminateAfterLastWindowClosed(NSApplication sender)
+		{
+			return true;
+		}
+
         public override void AwakeFromNib()
         {
             base.AwakeFromNib();

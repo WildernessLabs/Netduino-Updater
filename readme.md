@@ -31,7 +31,6 @@ A simple application to automatically deploy latest official firmware, or manual
  * UX is not finished.
  * Does not detect device connect/disconnect.
  * Unprogrammed N3WiFi in DFU mode doesn't allow window to be viewable/launch.
- * Closing Window doesn't quit
  * Cannot configure network yet.
 
 
