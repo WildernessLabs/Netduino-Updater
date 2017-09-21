@@ -161,7 +161,7 @@ namespace NetduinoDeploy.Managers
 
 			var configuration = new byte[32];
 
-			device.DownloadOtp(configuration);
+			device.Download(configuration, 0x1FFF7800, 2);
 			return configuration;
 
 		}
@@ -171,7 +171,7 @@ namespace NetduinoDeploy.Managers
             var devices = DfuContext.Current.GetDevices();
 			DfuDevice device = devices[0];
 
-			device.UploadOtp(data);
+			device.Upload(data, 0x1FFF7800, 2);
 			return true;
 		}
 

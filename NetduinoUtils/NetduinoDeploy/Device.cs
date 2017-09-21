@@ -16,6 +16,8 @@ namespace NetduinoDeploy
 		public uint FlashBaseAddress { get; set; }
 		[JsonProperty("hasMacAddress")]
 		public bool HasMacAddress { get; set; }
+		[JsonProperty("isWirelessCapable")]
+		public bool IsWirelessCapable { get; set; }
 		[JsonProperty("sectors")]
 		public IEnumerable<uint> Sectors { get; set; }
     }

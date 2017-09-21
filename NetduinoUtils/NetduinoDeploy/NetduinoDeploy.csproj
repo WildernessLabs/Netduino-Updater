@@ -30,6 +30,7 @@
     <HttpClientHandler></HttpClientHandler>
     <LinkMode></LinkMode>
     <XamMacArch></XamMacArch>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
@@ -48,6 +49,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <HttpClientHandler></HttpClientHandler>
     <XamMacArch></XamMacArch>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -107,6 +109,10 @@
     <Compile Include="SrexHexEncoding.cs" />
     <Compile Include="Managers\FirmwareManager.cs" />
     <Compile Include="DfuContext.cs" />
+    <Compile Include="Managers\NetworkManager.cs" />
+    <Compile Include="Managers\MFNetworkConfig.cs" />
+    <Compile Include="Managers\CRC.cs" />
+    <Compile Include="Managers\NetworkConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />

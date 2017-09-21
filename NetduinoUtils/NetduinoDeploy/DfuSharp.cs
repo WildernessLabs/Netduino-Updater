@@ -347,7 +347,7 @@ namespace DfuSharp
 			}
 		}
 
-		public void Upload(byte[] data, int? baseAddress = null)
+		public void Upload(byte[] data, int? baseAddress = null, int altSetting=0)
 		{
 			var mem = Marshal.AllocHGlobal(transfer_size);
 
@@ -361,7 +361,11 @@ namespace DfuSharp
 					if (count <= 0)
 						return;
 
+                    Clear();
+					ClaimInterface();
+					if(altSetting != 0) SetInterfaceAltSetting(altSetting);
 					SetAddress(write_address);
+					Clear();
 
 					Marshal.Copy(data, pos, mem, count);
 
@@ -395,7 +399,6 @@ namespace DfuSharp
 
 		public void Download(FileStream file)
 		{
-			//SetAddress(0x1FFF7800);
 			var buffer = new byte[transfer_size];
 			var mem = Marshal.AllocHGlobal(transfer_size);
 
@@ -431,7 +434,7 @@ namespace DfuSharp
 			}
 		}
 
-		public void Download(byte[] block)
+		public void Download(byte[] block, int address, int altSetting=0)
 		{
 			int size = block.Length;
 
@@ -440,40 +443,11 @@ namespace DfuSharp
 			try
 			{
 				ushort transaction = 2;
-				int ret = NativeMethods.libusb_control_transfer(
-														handle,
-														0x80 /*LIBUSB_ENDPOINT_IN*/ | (0x1 << 5) /*LIBUSB_REQUEST_TYPE_CLASS*/ | 0x01 /*LIBUSB_RECIPIENT_INTERFACE*/,
-														2 /*DFU_UPLOAD*/,
-														transaction++,
-														interface_descriptor.bInterfaceNumber,
-														mem,
-														(ushort)size,
-														5000);
-				if (ret < 0)
-					throw new Exception(string.Format("Error with DFU_UPLOAD: {0}", ret));
 
-				Marshal.Copy(mem, block, 0, ret);
-			}
-			finally
-			{
-				Marshal.FreeHGlobal(mem);
-			}
-		}
-
-		public void DownloadOtp(byte[] block)
-		{
-			int size = block.Length;
-
-			var mem = Marshal.AllocHGlobal(size);
-
-			try
-			{
-				ushort transaction = 2;
-  
-                Clear();
+				Clear();
 				ClaimInterface();
-                SetInterfaceAltSetting(2);
-                SetAddress(0x1FFF7800);
+				if(altSetting != 0) SetInterfaceAltSetting(altSetting);
+				SetAddress(address);
 				Clear();
 
 				int ret = NativeMethods.libusb_control_transfer(
@@ -493,48 +467,7 @@ namespace DfuSharp
 			finally
 			{
 				Marshal.FreeHGlobal(mem);
-                Clear();
-			}
-		}
-
-		public void UploadOtp(byte[] data)
-		{
-			var mem = Marshal.AllocHGlobal(data.Length);
-
-			try
-			{
 				Clear();
-				ClaimInterface();
-				SetInterfaceAltSetting(2);
-				SetAddress(0x1FFF7800);
-				Clear();
-
-				Marshal.Copy(data, 0, mem, data.Length);
-
-				var ret = NativeMethods.libusb_control_transfer(
-											handle,
-											0x00 /*LIBUSB_ENDPOINT_OUT*/ | (0x1 << 5) /*LIBUSB_REQUEST_TYPE_CLASS*/ | 0x01 /*LIBUSB_RECIPIENT_INTERFACE*/,
-											1 /*DFU_DNLOAD*/,
-											2,
-											interface_descriptor.bInterfaceNumber,
-											mem,
-											(ushort)data.Length,
-											5000);
-
-				if (ret < 0)
-					throw new Exception(string.Format("Error with WRITE_SECTOR: {0}", ret));
-				var status = GetStatus(handle, interface_descriptor.bInterfaceNumber);
-
-				while (status == 4)
-				{
-					Thread.Sleep(100);
-					status = GetStatus(handle, interface_descriptor.bInterfaceNumber);
-				}
-
-			}
-			finally
-			{
-				Marshal.FreeHGlobal(mem);
 			}
 		}
 
