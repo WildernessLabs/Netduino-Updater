@@ -25,14 +25,10 @@ namespace NetduinoDeploy
 		string _flashFile = string.Empty;
 		string _bootFile = string.Empty;
 		Device _selectedDeviceType;
-
+		int maxFileStringLen = 60;
 		Regex _macAddressRegex = new Regex("^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$");
 		NetworkManager _networkManager;
 		NetworkConfig _networkConfig;
-
-		public ViewController(IntPtr handle) : base(handle)
-		{
-		}
 
 		private List<ushort> validVendorIDs = new List<ushort>
 		{
@@ -41,6 +37,71 @@ namespace NetduinoDeploy
 			0x05A, // who knows
 			0x0483 // bootloader
 		};
+
+		public string ConfigFile
+		{
+			get
+			{
+				return _configFile;
+			}
+			set
+			{
+				_configFile = value;
+				if (_configFile.Length > maxFileStringLen)
+				{
+					ConfigFileLabel.StringValue = "..." + _configFile.Substring(_configFile.Length - maxFileStringLen);
+				}
+				else
+				{
+					ConfigFileLabel.StringValue = value;
+				}
+
+			}
+		}
+
+		public string FlashFile
+		{
+			get
+			{
+				return _flashFile;
+			}
+			set
+			{
+				_flashFile = value;
+				if (_flashFile.Length > maxFileStringLen)
+				{
+					FlashFileLabel.StringValue = "..." + _flashFile.Substring(_flashFile.Length - maxFileStringLen);
+				}
+				else
+				{
+					FlashFileLabel.StringValue = value;
+				}
+			}
+		}
+
+		public string BootFile
+		{
+			get
+			{
+				return _bootFile;
+			}
+			set
+			{
+				_bootFile = value;
+				if (_bootFile.Length > maxFileStringLen)
+				{
+					BootFileLabel.StringValue = "..." + _bootFile.Substring(_bootFile.Length - maxFileStringLen);
+				}
+				else
+				{
+					BootFileLabel.StringValue = value;
+				}
+			}
+		}
+
+		public ViewController(IntPtr handle) : base(handle)
+		{
+		}
 
 		async public override void ViewDidLoad()
 		{
@@ -128,7 +189,7 @@ namespace NetduinoDeploy
 				if (deviceType.HasMacAddress)
 				{
 					_networkManager = new NetworkManager();
-                    LoadAuthenticationTypes();
+					LoadAuthenticationTypes();
 					LoadEncryptionTypes();
 					LoadNetworkKeyTypes();
 					LoadNetworkSettings();
@@ -277,7 +338,7 @@ namespace NetduinoDeploy
 			{
 				if (status != "100")
 				{
-                    InvokeOnMainThread(() => UpdateFirmwareButton.Title = "Updating... " + status + "%");
+					InvokeOnMainThread(() => UpdateFirmwareButton.Title = "Updating... " + status + "%");
 				}
 			};
 
@@ -310,7 +371,7 @@ namespace NetduinoDeploy
 						LoadNetworkSettings(true);
 						OutputToConsole("Finished firmware update");
 					});
-				}	
+				}
 			});
 		}
 
@@ -342,12 +403,6 @@ namespace NetduinoDeploy
 				try
 				{
 					manager.EraseAndUploadDevice(0, productId, _configFile, _flashFile, _bootFile);
-					OtpManager otpManager = new OtpManager();
-					var settings = otpManager.GetOtpSettings();
-
-					_networkConfig = new NetworkConfig();
-					_networkConfig.NetworkMacAddress = settings.MacAddress;
-					SaveNetworkSettings();
 				}
 				catch (Exception e)
 				{
@@ -357,13 +412,18 @@ namespace NetduinoDeploy
 				{
 					InvokeOnMainThread(() =>
 					{
-                        LoadNetworkSettings();
+						_networkConfig = new NetworkConfig();
+						LoadNetworkSettings(true);
 
 						DeployButton.Title = "Deploy";
 						DeployButton.Enabled = true;
 
 						NetworkUpdateButton.Enabled = true;
 						UpdateFirmwareButton.Enabled = true;
+
+						BootFile = string.Empty;
+						ConfigFile = string.Empty;
+						FlashFile = string.Empty;
 
 						OutputToConsole("Finished deploy");
 					});
@@ -383,40 +443,20 @@ namespace NetduinoDeploy
 			{
 				if (dlg.Urls.SingleOrDefault(x => x.Path.ToLower().Contains("er_config"))?.Path != null)
 				{
-					_configFile = dlg.Urls.SingleOrDefault(x => x.Path.ToLower().Contains("er_config"))?.Path;
+					ConfigFile = dlg.Urls.SingleOrDefault(x => x.Path.ToLower().Contains("er_config"))?.Path;
 				}
 
 				if (dlg.Urls.SingleOrDefault(x => x.Path.ToLower().Contains("er_flash"))?.Path != null)
 				{
-					_flashFile = dlg.Urls.SingleOrDefault(x => x.Path.ToLower().Contains("er_flash"))?.Path;
+					FlashFile = dlg.Urls.SingleOrDefault(x => x.Path.ToLower().Contains("er_flash"))?.Path;
 				}
 
 				if (dlg.Urls.SingleOrDefault(x => x.Path.ToLower().Contains("tinybooter"))?.Path != null)
 				{
-					_bootFile = dlg.Urls.SingleOrDefault(x => x.Path.ToLower().Contains("tinybooter"))?.Path;
+					BootFile = dlg.Urls.SingleOrDefault(x => x.Path.ToLower().Contains("tinybooter"))?.Path;
 				}
 
-				ConfigFileLabel.StringValue = _configFile ?? string.Empty;
-				FlashFileLabel.StringValue = _flashFile ?? string.Empty;
-				BootFileLabel.StringValue = _bootFile ?? string.Empty;
-
-				int maxLen = 45;
-				if (ConfigFileLabel.StringValue.Length > maxLen)
-				{
-					ConfigFileLabel.StringValue = "..." + _configFile.Substring(_configFile.Length - maxLen);
-				}
-
-				if (FlashFileLabel.StringValue.Length > maxLen)
-				{
-					FlashFileLabel.StringValue = "..." + _flashFile.Substring(_flashFile.Length - maxLen);
-				}
-
-				if (BootFileLabel.StringValue.Length > maxLen)
-				{
-					BootFileLabel.StringValue = "..." + _bootFile.Substring(_flashFile.Length - maxLen);
-				}
-
-				DeployButton.Enabled = (!string.IsNullOrEmpty(_configFile) && !string.IsNullOrEmpty(_flashFile) && !string.IsNullOrEmpty(_bootFile));
+				DeployButton.Enabled = (!string.IsNullOrEmpty(ConfigFile) && !string.IsNullOrEmpty(FlashFile) && !string.IsNullOrEmpty(BootFile));
 			}
 		}
 
@@ -424,9 +464,9 @@ namespace NetduinoDeploy
 
 		private void LoadNetworkSettings(bool skipReadFromDevice = false)
 		{
-			if(!skipReadFromDevice)
+			if (!skipReadFromDevice)
 			{
-                ReadNetworkSettingsFromDevice();
+				ReadNetworkSettingsFromDevice();
 			}
 
 			if (_networkConfig.NetworkMacAddress == null || _networkConfig.NetworkMacAddress.Length == 0)
@@ -438,7 +478,7 @@ namespace NetduinoDeploy
 				_networkConfig.NetworkMacAddress = settings.MacAddress;
 				_networkConfig.IsWireless = _selectedDeviceType.IsWirelessCapable;
 				SaveNetworkSettings();
-                ReadNetworkSettingsFromDevice();
+				ReadNetworkSettingsFromDevice();
 			}
 
 			EnableManualIpSettings(!_networkConfig.EnableDHCP);
@@ -446,7 +486,7 @@ namespace NetduinoDeploy
 			StaticIPAddress.StringValue = _networkConfig.StaticIPAddress.ToString();
 			SubnetMask.StringValue = _networkConfig.SubnetMask.ToString();
 			DefaultGateway.StringValue = _networkConfig.DefaultGateway.ToString();
-			NetworkMacAddress.StringValue = BitConverter.ToString(_networkConfig.NetworkMacAddress);
+			NetworkMacAddress.StringValue = BitConverter.ToString(_networkConfig.NetworkMacAddress).Replace("-", ":");
 			PrimaryDNS.StringValue = _networkConfig.PrimaryDNS.ToString();
 			SecondaryDNS.StringValue = _networkConfig.SecondaryDNS.ToString();
 
@@ -474,7 +514,7 @@ namespace NetduinoDeploy
 
 		partial void NetworkUpdate(NSObject sender)
 		{
-            ReadNetworkSettingsFromForm();
+			ReadNetworkSettingsFromForm();
 			SaveNetworkSettings();
 		}
 
@@ -512,9 +552,9 @@ namespace NetduinoDeploy
 			}
 			mfNetConfig.Save(_networkManager);
 
-			if (logToConsole) 
-			{ 
-				OutputToConsole("Network settings saved."); 
+			if (logToConsole)
+			{
+				OutputToConsole("Network settings saved.");
 			}
 		}
 
@@ -561,7 +601,7 @@ namespace NetduinoDeploy
 			_networkConfig.PrimaryDNS = _networkConfig.ParseAddress(PrimaryDNS.StringValue);
 			_networkConfig.SecondaryDNS = _networkConfig.ParseAddress(SecondaryDNS.StringValue);
 			_networkConfig.DefaultGateway = _networkConfig.ParseAddress(DefaultGateway.StringValue);
-			_networkConfig.NetworkMacAddress = NetworkMacAddress.StringValue.Split('-').Select(x => Convert.ToByte(x, 16)).ToArray();
+			_networkConfig.NetworkMacAddress = NetworkMacAddress.StringValue.Split(':').Select(x => Convert.ToByte(x, 16)).ToArray();
 			_networkConfig.EnableDHCP = EnableDHCP.State == NSCellStateValue.On;
 
 			if (_networkConfig.IsWireless)

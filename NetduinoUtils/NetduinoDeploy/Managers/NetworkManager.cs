@@ -13,7 +13,6 @@ namespace NetduinoDeploy.Managers
 		{
 		}
 
-		//private _DBG.WireProtocol.Commands.Monitor_FlashSectorMap.FlashSectorData m_cfg_sector;
 		private bool m_init = false;
 		private HAL_CONFIGURATION_SECTOR m_StaticConfig;
 		private byte[] m_all_cfg_data = null;
@@ -88,9 +87,6 @@ namespace NetduinoDeploy.Managers
 
 				device.Download(m_all_cfg_data, configAddress);
 
-				// read in the static portion of the config sector
-				//engine.ReadMemory(configAddress, (uint)hal_static_cfg_size, out m_all_cfg_data);
-
 				m_StaticConfig = (HAL_CONFIGURATION_SECTOR)UnmarshalData(m_all_cfg_data, typeof(HAL_CONFIGURATION_SECTOR));
 
 				// uninitialized config sector, lets try to fix it
@@ -103,26 +99,6 @@ namespace NetduinoDeploy.Managers
 					m_StaticConfig.Version.TinyBooter = 4;
 				}
 
-				//if (m_StaticConfig.ConfigurationLength >= configSize) throw new Exception();
-
-				//if (m_StaticConfig.Version.TinyBooter == 4)
-				//{
-				//	m_fStaticCfgOK = true;
-				//}
-				//else
-				//{
-				//	m_fStaticCfgOK = (m_StaticConfig.ConfigurationLength != hal_config_static_size);
-				//}
-
-				//// determine if we have a new or old version of the config (security keys are only supported in the new version)
-				//m_fValidConfig = (m_StaticConfig.Version.TinyBooter == CONFIG_SECTOR_VERSION.c_CurrentTinyBooterVersion);
-
-				//if (m_fStaticCfgOK)
-				//{
-				//	m_firmwareKeyLocked = CheckKeyLocked(m_StaticConfig, true);
-				//	m_deployKeyLocked = CheckKeyLocked(m_StaticConfig, false);
-				//}
-
 				// move to the dynamic configuration section
 				index = (int)m_StaticConfig.ConfigurationLength;
 
@@ -133,7 +109,6 @@ namespace NetduinoDeploy.Managers
 					byte[] data = new byte[hal_config_block_size];
 
 					// read the next configuration block
-					//engine.ReadMemory((uint)(configAddress + index), hal_config_block_size, out data);
 					device.Download(data, configAddress + index);
 
 					HAL_CONFIG_BLOCK cfg_header = (HAL_CONFIG_BLOCK)UnmarshalData(data, typeof(HAL_CONFIG_BLOCK));
@@ -157,7 +132,6 @@ namespace NetduinoDeploy.Managers
 							if ((index - idx) < size) size = index - idx;
 							tmp = new byte[size];
 
-							//engine.ReadMemory((uint)(configAddress + idx), (uint)size, out tmp);
 							device.Download(tmp, configAddress + idx);
 							Array.Copy(tmp, 0, m_all_cfg_data, idx, tmp.Length);
 
@@ -387,35 +361,7 @@ namespace NetduinoDeploy.Managers
 				}
 			}
 
-			// we need to perform signature check regardless of key update, in order for the device to write from ram buffer to flash
-			// BKBKBK
-
-			//if (!engine.CheckSignature(new byte[TINYBOOTER_KEY_CONFIG.c_KeySignatureLength], 0))
-			//{
-			//	if (engine.ConnectionSource == Microsoft.SPOT.Debugger.ConnectionSource.TinyBooter) throw new MFConfigSectorWriteFailureException();
-			//}
-
-			//if (engine.ConnectionSource == Microsoft.SPOT.Debugger.ConnectionSource.TinyBooter && m_fRestartClr)
-			//{
-			//	engine.ExecuteMemory(c_EnumerateAndLaunchAddr);
-			//}
 		}
-
-		//internal void SwapAllConfigData(MFConfigHelper srcConfigHelper)
-		//{
-		//	byte[] newAllConfigData = srcConfigHelper.m_all_cfg_data;
-
-		//	if (newAllConfigData == null)
-		//		throw new ArgumentNullException();
-
-		//	if (m_all_cfg_data != null)
-		//	{
-		//		if (m_all_cfg_data.Length != newAllConfigData.Length)
-		//			throw new ArgumentException("Invalid swap target");
-		//	}
-
-		//	m_all_cfg_data = newAllConfigData;
-		//}
 
 		private byte[] MarshalData(object obj)
 		{

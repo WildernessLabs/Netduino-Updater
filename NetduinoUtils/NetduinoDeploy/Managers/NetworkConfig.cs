@@ -23,9 +23,9 @@ namespace NetduinoDeploy.Managers
 		public IPAddress SecondaryDNS { get; set; }
 		public int Authentication { get; set; }
 		public int Encryption { get; set; }
-		public int Radio { get; set; }
+		public int Radio { get; set; } = 15; // a,b,g,n 
 
-		public string Passphrase { get; set; } = "PASSPHRASE";
+		public string Passphrase { get; set; } = "";
 		public bool EncryptConfig { get; set; }
 		public int NetworkKeyLength { get; set; }
 		public string NetworkKey { get; set; } = string.Empty;
