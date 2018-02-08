@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NetduinoDeploy.DeviceConsoleView">
+    <StackLayout Margin="10">
+        <Frame OutlineColor="#979797" BackgroundColor="#EEEEEE" 
+               Grid.ColumnSpan="5" Padding="2">
+            <Label x:Name="lblConsole" Text="Console output" LineBreakMode="WordWrap" HeightRequest="200" Margin="10" />
+        </Frame>
+
+        <Grid>
+            <Button x:Name="btnClear" Text="Clear"
+                Grid.Column="3" />
+
+            <Button x:Name="btnSave" Text="Save"
+                Grid.Column="4" />
+        </Grid>
+
+    </StackLayout>
+
+</ContentView>

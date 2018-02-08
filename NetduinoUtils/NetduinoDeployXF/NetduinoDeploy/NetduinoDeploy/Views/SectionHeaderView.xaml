@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NetduinoDeploy.SectionHeaderView">
+    <Grid BackgroundColor="#B09679">
+        <Grid Padding="10,5">
+            <Label x:Name="lblSectionTitle" Text="Title" TextColor="White" FontSize="Medium" HorizontalOptions="Start"/>
+            <Button x:Name="btnCollapseExpand" 
+                    Text="▲" TextColor="White" 
+                    BorderColor="White" BorderWidth="2" BorderRadius="4" 
+                    BackgroundColor="Transparent" 
+                    HorizontalOptions="End" />
+        </Grid>
+    </Grid>
+</ContentView>

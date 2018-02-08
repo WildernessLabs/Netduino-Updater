@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:NetduinoDeploy"
+             x:Class="NetduinoDeploy.MainPage"
+             BackgroundColor="#E6E4E6">
+
+    <ScrollView>
+        <StackLayout>
+            <Grid Padding="10">
+                <Button x:Name="btnRefresh" Text="Refresh" HorizontalOptions="Start" />
+                <Label Text="Netduino Deploy" HorizontalOptions="Center" />
+                <Image Source="wl_logo_sm.png" HorizontalOptions="End" />
+            </Grid>
+
+            <local:SectionHeaderView x:Name="headerOneTime" Title="One Time Programmable (OTP) Settings" />
+            <local:OneTimeSettingsView IsVisible="{Binding Source={x:Reference headerOneTime}, Path=IsExpanded}" />
+
+            <local:SectionHeaderView x:Name="headerFirmware" Title="Firmware" />
+            <local:FirmwareView IsVisible="{Binding Source={x:Reference headerFirmware}, Path=IsExpanded}" />
+
+            <local:SectionHeaderView x:Name="headerNetworkConfig" Title="Network Configuration" />
+            <local:NetworkConfigurationView IsVisible="{Binding Source={x:Reference headerNetworkConfig}, Path=IsExpanded}" />
+
+            <local:SectionHeaderView x:Name="headerConsole" Title="Device Console" />
+            <local:DeviceConsoleView IsVisible="{Binding Source={x:Reference headerConsole}, Path=IsExpanded}" />
+
+        </StackLayout>
+    </ScrollView>
+    
+</ContentPage>

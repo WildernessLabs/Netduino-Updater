@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NetduinoDeploy.FirmwareView">
+    <Grid Margin="10">
+        <StackLayout Orientation="Horizontal">
+            <Label Text="LatestFirmware: " />
+            <Label x:Name="lblFirmwareVersion" Text="0.0.0.0" />
+        </StackLayout>
+        
+        <Button x:Name="btnInstallLatestFirmware" Text="Install Latest Firmware" 
+                Grid.Row="0" Grid.Column="2"/>
+
+        <Label Text="Manually Install Firmware:"
+               Grid.Row="1 "/>
+        <Button x:Name="btnChoose" Text="Choose" 
+                Grid.Row="1" Grid.Column="2"/>
+
+        <Label Text="Config File:"
+               Grid.Row="2" />
+
+        <Label Text="{Binding ConfileFile}"
+               Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" />
+
+        <Label Text="Flash File:"
+               Grid.Row="3" />
+
+        <Label Text="{Binding FlashFile}"
+               Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" />
+
+        <Label Text="Boot File:"
+               Grid.Row="4" />
+
+        <Label Text="{Binding BootFile}"
+               Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" />
+
+
+        <Button x:Name="btnDeploy" Text="Deploy" 
+               Grid.Row="5" Grid.Column="2"/>
+       
+     </Grid>
+    
+</ContentView>
