@@ -26,10 +26,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)DFU\Firmware.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Globals.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Managers\CRC.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Managers\FirmwareDownloadManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Managers\FirmwareManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Managers\MFNetworkConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Managers\MFWirelessConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Managers\NetworkConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Managers\NetworkManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Managers\OtpFileManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Managers\OtpManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SrexHexEncoding.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DeviceConsoleViewModel.cs" />

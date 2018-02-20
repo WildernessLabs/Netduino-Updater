@@ -8,7 +8,7 @@ namespace NetduinoDeploy
 	{
 		public NetworkConfigurationView ()
 		{
-            BindingContext = new NetworkConfigurationViewModel(new NetworkConfig());
+            BindingContext = new NetworkConfigurationViewModel();
 
 			InitializeComponent ();
 		}

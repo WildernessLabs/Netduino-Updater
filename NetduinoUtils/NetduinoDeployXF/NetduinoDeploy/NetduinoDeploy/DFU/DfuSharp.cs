@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
+//Windows USB driver required to open USB devices: https://docs.microsoft.com/en-us/windows-hardware/drivers/usbcon/winusb
+
 namespace DfuSharp
 {
 	enum Consts
@@ -25,9 +27,10 @@ namespace DfuSharp
 
 	class NativeMethods
 	{
-		const string LIBUSB_LIBRARY = "libusb-1.0";
+        //const string LIBUSB_LIBRARY = "libusb-1.0";
+        const string LIBUSB_LIBRARY = "libusb-1.0.dll";
 
-		[DllImport(LIBUSB_LIBRARY)]
+        [DllImport(LIBUSB_LIBRARY)]
 		internal static extern int libusb_init(ref IntPtr ctx);
 
 		[DllImport(LIBUSB_LIBRARY)]
@@ -682,13 +685,20 @@ namespace DfuSharp
 							var interface_descriptor = @interface.Altsetting[l];
 
 							// Ensure this is a DFU descriptor
-							if (interface_descriptor.bInterfaceClass != 0xfe || interface_descriptor.bInterfaceSubClass != 0x1)
-								continue;
+						    // ToDo - Adrian commented out two lines below when testing on Windows
+                            if (interface_descriptor.bInterfaceClass != 0xfe || interface_descriptor.bInterfaceSubClass != 0x1)
+						    	continue;
 
 							var dfu_descriptor = FindDescriptor(interface_descriptor.extra, interface_descriptor.extra_length, (byte)Consts.USB_DT_DFU);
-							if (dfu_descriptor != null)
-								dfu_devices.Add(new DfuDevice(devices[i], interface_descriptor, dfu_descriptor.Value));
-						}
+
+                            try
+                            {
+                                if (dfu_descriptor != null)
+                                    dfu_devices.Add(new DfuDevice(devices[i], interface_descriptor, dfu_descriptor.Value));
+                            }
+                            catch
+                            { }
+                        }
 					}
 				}
 			}

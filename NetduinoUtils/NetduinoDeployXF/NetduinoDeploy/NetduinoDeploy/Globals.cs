@@ -11,7 +11,7 @@ namespace NetduinoDeploy
 		{
             try
             {
-                using (TextReader tr = File.OpenText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Resources), "devices.json")))
+                using (TextReader tr = File.OpenText(Path.Combine(Environment.CurrentDirectory, "devices.json")))
                 {
                     var data = tr.ReadToEnd();
                     DeviceTypes = JsonConvert.DeserializeObject<List<Device>>(data);
@@ -21,9 +21,6 @@ namespace NetduinoDeploy
             {
                 DeviceTypes = new List<Device>();
             }
-
-
-			
         }
 
         public static List<Device> DeviceTypes { get; set; }

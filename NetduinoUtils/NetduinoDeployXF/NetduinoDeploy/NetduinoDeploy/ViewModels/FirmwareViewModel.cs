@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using NetduinoDeploy.Managers;
+using System.Threading.Tasks;
 
 namespace NetduinoDeploy
 {
@@ -29,9 +28,13 @@ namespace NetduinoDeploy
         }
         string _bootFile;
 
+        Task firmwareTask;
+
         public FirmwareViewModel()
         {
+            var firmwareDownloader = new FirmwareDownloadManager();
 
+            firmwareTask = firmwareDownloader.DownloadFirmware();
         }
 
         string GetDisplayString(string text, int maxLength)

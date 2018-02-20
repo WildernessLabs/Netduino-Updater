@@ -14,6 +14,8 @@ namespace NetduinoDeploy
             0x0483 // bootloader
         };
 
+        List<DfuDevice> devices;
+
         // --------------------------- INSTANCE
         public static DfuContext Current;
 
@@ -33,7 +35,10 @@ namespace NetduinoDeploy
 
         public List<DfuDevice> GetDevices()
         {
-            return _context.GetDfuDevices(validVendorIDs);
+            if(devices == null)
+                devices = _context.GetDfuDevices(validVendorIDs);
+
+            return devices;
         }
 
 		public bool HasCapability(Capabilities caps)

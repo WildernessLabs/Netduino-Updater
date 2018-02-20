@@ -11,15 +11,11 @@ namespace NetduinoDeploy.Managers
 	public class FirmwareManager
 	{
 		public FirmwareManager()
-		{
-		}
+		{ }
 
 		private double CurrentProgress
 		{
-			get
-			{
-				return Math.Round((eraseProgress + uploadProgress) / 2, 0);
-			}
+			get => Math.Round((eraseProgress + uploadProgress) / 2, 0);
 		}
 
 		private double eraseProgress = 0;
@@ -120,7 +116,6 @@ namespace NetduinoDeploy.Managers
 			};
 
 			// load config
-
 			using (System.IO.StreamReader streamReader = new System.IO.StreamReader(configPath))
 			{
 				string hexFileString = streamReader.ReadToEnd();
@@ -129,7 +124,6 @@ namespace NetduinoDeploy.Managers
 			}
 
 			// load flash
-
 			using (System.IO.StreamReader streamReader = new System.IO.StreamReader(flashPath))
 			{
 				string hexFileString = streamReader.ReadToEnd();
@@ -141,7 +135,7 @@ namespace NetduinoDeploy.Managers
 			device.SetAddress(0x08000001); // NOTE: for thumb2 instructinos, we added 1 to the "base address".  Otherwise our board will not restart properly.
 			RaiseFirmwareUpdateProgress("Update Complete");
 
-			//                                    // leave DFU mode.
+			//// leave DFU mode.
 			////device.LeaveDfuMode();
 			return Task.CompletedTask;
 		}

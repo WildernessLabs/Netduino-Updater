@@ -6,7 +6,7 @@
              BackgroundColor="#E6E4E6">
 
     <ScrollView>
-        <StackLayout>
+        <StackLayout Padding="0, 0, 15, 0">
             <Grid Padding="10">
                 <Button x:Name="btnRefresh" Text="Refresh" HorizontalOptions="Start" />
                 <Label Text="Netduino Deploy" HorizontalOptions="Center" />

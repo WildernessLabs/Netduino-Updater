@@ -1,27 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+﻿using NetduinoDeploy;
+using LibUsbDotNet.DeviceNotify;
 
 namespace NetduinoFirmware.UWP
 {
     public sealed partial class MainPage
     {
+        public static IDeviceNotifier UsbDeviceNotifier = DeviceNotifier.OpenDeviceNotifier();
+
         public MainPage()
         {
             this.InitializeComponent();
 
             LoadApplication(new NetduinoDeploy.App());
+
+            // DfuContext.Init();
+
+            UsbDeviceNotifier.OnDeviceNotify += UsbDeviceNotifier_OnDeviceNotify;
+        }
+
+        void UsbDeviceNotifier_OnDeviceNotify(object sender, DeviceNotifyEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine(e.ToString());
         }
     }
 }

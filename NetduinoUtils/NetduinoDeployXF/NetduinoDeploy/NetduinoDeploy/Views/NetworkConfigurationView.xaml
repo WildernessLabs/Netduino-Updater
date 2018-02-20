@@ -4,34 +4,34 @@
              x:Class="NetduinoDeploy.NetworkConfigurationView">
     <Grid Margin="10" RowSpacing="2" ColumnSpacing="10">
         <Label Text="Static IP Address:" />
-        <Entry x:Name="entryIPAddress" 
+        <Entry x:Name="entryIPAddress" Text="{Binding StaticIPAddress}"
                Grid.Column="1"/>
-        <Label Text="Subnet Mask:"
+        <Label Text="Subnet Mask:" 
                Grid.Column="2" />
-        <Entry x:Name="entrySubnetMask" 
+        <Entry x:Name="entrySubnetMask" Text="{Binding SubnetMask}"
                Grid.Column="3" />
 
         <Label Text="Default Gateway:" 
                Grid.Column="0" Grid.Row="1" />
-        <Entry x:Name="entryGateway" 
+        <Entry x:Name="entryGateway" Text="{Binding DefaultGateway}"
                Grid.Column="1" Grid.Row="1" />
         <Label Text="Mac Address:"
                Grid.Column="2" Grid.Row="1" />
-        <Entry x:Name="entryMacAddress" 
+        <Entry x:Name="entryMacAddress" Text="{Binding MacAddress}"
                Grid.Column="3" Grid.Row="1" />
 
         <Label Text="Primary DNS:"  
                 Grid.Row="2" />
-        <Entry x:Name="entryPrimaryDNS" 
+        <Entry x:Name="entryPrimaryDNS" Text="{Binding PrimaryDNS}"
                Grid.Column="1" Grid.Row="2" />
         <Label Text="Secondary DNS:"
                Grid.Column="2" Grid.Row="2" />
-        <Entry x:Name="entrySecondaryDNS" 
+        <Entry x:Name="entrySecondaryDNS" Text="{Binding SecondaryDNS}"
                Grid.Column="3" Grid.Row="2" />
 
         <Label Text="DHCP Enabled:" 
                Grid.Column="0" Grid.Row="3" />
-        <Switch x:Name="swtichDHCP"
+        <Switch x:Name="swtichDHCP" IsToggled="{Binding IsDHCPEnabled}"
                Grid.Column="1" Grid.Row="3" />
 
         <Label Text="Wireless Network"  
@@ -44,25 +44,25 @@
             <StackLayout Orientation="Horizontal" 
                 Grid.Column="0">
                 <Label Text="802.11a:" />
-                <Switch x:Name="switch80211a" />
+                <Switch x:Name="switch80211a" IsToggled="{Binding Is80211aEnabled}" />
             </StackLayout>
 
             <StackLayout Orientation="Horizontal" 
                 Grid.Column="1">
                 <Label Text="802.11b:" />
-                <Switch x:Name="switch80211b" />
+                <Switch x:Name="switch80211b" IsToggled="{Binding Is80211bEnabled}" />
             </StackLayout>
 
             <StackLayout Orientation="Horizontal" 
                 Grid.Column="2">
                 <Label Text="802.11g:" />
-                <Switch x:Name="switch80211g" />
+                <Switch x:Name="switch80211g" IsToggled="{Binding Is80211gEnabled}" />
             </StackLayout>
 
             <StackLayout Orientation="Horizontal" 
                 Grid.Column="3">
                 <Label Text="802.11n:" />
-                <Switch x:Name="switch80211n" />
+                <Switch x:Name="switch80211n" IsToggled="{Binding Is80211nEnabled}" />
             </StackLayout>
 
         </Grid>

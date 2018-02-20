@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Xamarin.Forms;
 
 namespace NetduinoDeploy
@@ -11,7 +7,20 @@ namespace NetduinoDeploy
 	{
 		public MainPage()
 		{
-			InitializeComponent();
-		}
+            DfuContext.Init();
+
+            InitializeComponent();
+
+            bool hasCapabilities = DfuContext.Current.HasCapability(DfuSharp.Capabilities.HasCapabilityAPI);
+            Debug.WriteLine($"Has capabilities: {hasCapabilities}");
+
+            if (hasCapabilities)
+            {
+                bool hasHotPlug = DfuContext.Current.HasCapability(DfuSharp.Capabilities.SupportsHotplug);
+
+                Debug.WriteLine($"Has hotplug support: {hasHotPlug}");
+                DfuContext.Current.BeginListeningForHotplugEvents();
+            }
+        }
 	}
 }
