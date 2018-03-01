@@ -4,15 +4,15 @@
              x:Class="NetduinoDeploy.OneTimeSettingsView">
     <Grid Margin="10">
         <Label Text="Model:" />
-        <Picker x:Name="pickerModel" ItemsSource="{Binding Models}" SelectedItem="{Binding SelectedDeviceType}"  TextColor="#23ABE3" 
+        <Picker x:Name="pickerModel" ItemsSource="{Binding Devices}" SelectedItem="{Binding SelectedDevice}" TextColor="#23ABE3" 
                 Grid.Row="0" Grid.Column="2" />
         <Label Text="MAC Address:" 
                 Grid.Row="1" Grid.Column="0" />
-        <Entry x:Name="entryMacAddress" Text="{Binding MacAddress}" IsEnabled="False"
+        <Entry x:Name="entryMacAddress" Text="{Binding MacAddress}" IsEnabled="{Binding CanSave}"
                 Grid.Row="1" Grid.Column="2" />
         <Label x:Name="lblStatus" Text="{Binding Status}" 
                 Grid.Row="2" Grid.Column="0" />
-        <Button x:Name="buttonSave" Text="Save Settings" Command="{Binding CommitSettingsSelected}"
+        <Button x:Name="buttonSave" Text="Save Settings" Command="{Binding CommitSettingsSelected}" IsEnabled="{Binding CanSave}"
                 Grid.Row="2" Grid.Column="2" />
 
     </Grid>

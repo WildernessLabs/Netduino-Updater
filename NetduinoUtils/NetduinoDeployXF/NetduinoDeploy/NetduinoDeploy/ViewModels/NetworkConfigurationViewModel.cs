@@ -1,87 +1,154 @@
 ﻿using NetduinoDeploy.Managers;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
-using NetduinoFirmware.Managers;
+using Xamarin.Forms;
 
 namespace NetduinoDeploy
 {
     public class NetworkConfigurationViewModel : ViewModelBase
     {
-        public List<string> NetworkKeyTypes { get; private set; } = new List<string>();
-        public List<string> EncryptionTypes { get; private set; } = new List<string>();
-        public List<string> AuthenticationTypes { get; private set; } = new List<string>();
+        public List<string> NetworkKeyTypes { get; set; } = new List<string> { "64-bit", "128-bit", "256-bit", "512-bit", "1024-bit", "2048-bit" };
+        public List<string> EncryptionTypes { get; set; } = new List<string> { "None", "WEP", "WPA", "WPAPSK", "Certificate" };
+        public List<string> AuthenticationTypes { get; set; } = new List<string> { "None", "EAP", "PEAP", "WCN", "Open", "Shared" };
 
         public string StaticIPAddress
         {
-            get => networkConfig.StaticIPAddress.ToString();
+            get => networkConfig?.StaticIPAddress.ToString();
             set => networkConfig.StaticIPAddress = networkConfig.ParseAddress(value);
         }
 
         public string SubnetMask
         {
-            get => networkConfig.SubnetMask.ToString();
+            get => networkConfig?.SubnetMask.ToString();
             set => networkConfig.SubnetMask = networkConfig.ParseAddress(value);
         }
 
         public string PrimaryDNS
         {
-            get => networkConfig.PrimaryDNS.ToString();
+            get => networkConfig?.PrimaryDNS.ToString();
             set => networkConfig.PrimaryDNS = networkConfig.ParseAddress(value);
         }
 
         public string SecondaryDNS
         {
-            get => networkConfig.SecondaryDNS.ToString();
+            get => networkConfig?.SecondaryDNS.ToString();
             set => networkConfig.SecondaryDNS = networkConfig.ParseAddress(value);
         }
 
         public string DefaultGateway
         {
-            get => networkConfig.DefaultGateway.ToString();
+            get => networkConfig?.DefaultGateway.ToString();
             set => networkConfig.DefaultGateway = networkConfig.ParseAddress(value);
         }
 
-        public bool IsDHCPEnabled
+        public bool IsDHCPEnabled => networkConfig.EnableDHCP;
+
+        public bool Is80211aEnabled
         {
-            get => networkConfig.EnableDHCP;
-            set => networkConfig.EnableDHCP = value;
+            get => IsRadioEnabled(MFWirelessConfiguration.RadioTypes.a);
+            set
+            {
+                UpdateNetworkConfigRadio(MFWirelessConfiguration.RadioTypes.a, value);
+                OnPropertyChanged(nameof(Is80211aEnabled));
+            }
         }
 
-      /*  public bool Is80211aEnabled
+        public bool Is80211bEnabled
         {
-            get => networkConfig.
-            set => networkConfig.EnableDHCP = value;
-        }*/
+            get => IsRadioEnabled(MFWirelessConfiguration.RadioTypes.b);
+            set
+            {
+                UpdateNetworkConfigRadio(MFWirelessConfiguration.RadioTypes.b, value);
+                OnPropertyChanged(nameof(Is80211bEnabled));
+            }
+        }
 
+        public bool Is80211gEnabled
+        {
+            get => IsRadioEnabled(MFWirelessConfiguration.RadioTypes.g);
+            set
+            {
+                UpdateNetworkConfigRadio(MFWirelessConfiguration.RadioTypes.g, value);
+                OnPropertyChanged(nameof(Is80211gEnabled));
+            }
+        }
 
+        public bool Is80211nEnabled
+        {
+            get => IsRadioEnabled(MFWirelessConfiguration.RadioTypes.n);
+            set
+            {
+                UpdateNetworkConfigRadio(MFWirelessConfiguration.RadioTypes.n, value);
+                OnPropertyChanged(nameof(Is80211nEnabled));
+            }
+        }
 
+        public string SSID => networkConfig?.SSID;
+        
 
+        public string SelectedAuthenticationType
+        {
+            get => AuthenticationTypes[networkConfig.Authentication];
+            set => networkConfig.Authentication = AuthenticationTypes.IndexOf(value);
+        }
+
+        public string SelectedEncryptionType
+        {
+            get => EncryptionTypes[networkConfig.Encryption];
+            set => networkConfig.Encryption = EncryptionTypes.IndexOf(value);
+        }
+
+        public string SelectedNetworkKeyType
+        {
+            get => NetworkKeyTypes[GetNetworkTypeIndex(networkConfig.NetworkKeyLength)];
+            set => networkConfig.NetworkKeyLength = NetworkKeyTypes.IndexOf(value);
+        }
+
+        public string PassPhrase => networkConfig?.Passphrase;
+        public string NetworkKey => networkConfig?.NetworkKey;
+
+        public string ReKeyInterval => networkConfig?.ReKeyInternal;
+        public bool UseEncryptConfig => networkConfig.EncryptConfig;
+
+        public bool IsWireless => networkConfig.IsWireless;
+
+        public Command UpdateSelected { get; set; }
+
+        
         NetworkManager networkManager;
-
 
         NetworkConfig networkConfig;
 
-        Device selectedDeviceType = Globals.DeviceTypes[0]; //
+        Device selectedDeviceType = Globals.DeviceTypes[0];
 
-        public NetworkConfigurationViewModel ()
+        public NetworkConfigurationViewModel()
         {
             networkManager = new NetworkManager();
 
+            if (Globals.ConnectedDeviceId > 0)
+                LoadNetworkSettings();
+            else
+                networkConfig = new NetworkConfig();
+
             Initialize();
-            
-            LoadNetworkSettings();
+
+            UpdateSelected = new Command(OnUpdate);
 
             RaiseAllPropertiesChanged();
         }
 
-        void LoadNetworkSettings (bool skipReadFromDevice = false)
+        void OnUpdate ()
+        {
+            SaveNetworkSettings(true);
+        }
+
+        void LoadNetworkSettings(bool skipReadFromDevice = false)
         {
             if (!skipReadFromDevice)
                 ReadNetworkSettingsFromDevice();
 
-            if(networkConfig.NetworkMacAddress == null || 
+            if (networkConfig.NetworkMacAddress == null ||
                 networkConfig.NetworkMacAddress.Length == 0)
             {
                 var otpManager = new OtpManager();
@@ -126,52 +193,52 @@ namespace NetduinoDeploy
 
             if (mfNetConfig.ConfigurationType == MFNetworkConfiguration.NetworkConfigType.Wireless)
             {
-                MFWirelessConfiguration mfWifiConfig = new MFWirelessConfiguration();
+                var mfWifiConfig = new MFWirelessConfiguration();
 
                 mfWifiConfig.Load(networkManager);
 
                 networkConfig.IsWireless = true;
-                networkConfig.Authentication    = mfWifiConfig.Authentication;
-                networkConfig.Encryption        = mfWifiConfig.Encryption;
-                networkConfig.Radio             = mfWifiConfig.Radio;
-                networkConfig.Passphrase        = mfWifiConfig.PassPhrase;
-                networkConfig.EncryptConfig     = mfWifiConfig.UseEncryption;
-                networkConfig.NetworkKey        = mfWifiConfig.NetworkKey;
-                networkConfig.NetworkKeyLength  = mfWifiConfig.NetworkKeyLength;
-                networkConfig.ReKeyInternal     = mfWifiConfig.ReKeyInternal;
-                networkConfig.SSID              = mfWifiConfig.SSID;
+                networkConfig.Authentication = mfWifiConfig.Authentication;
+                networkConfig.Encryption = mfWifiConfig.Encryption;
+                networkConfig.Radio = mfWifiConfig.Radio;
+                networkConfig.Passphrase = mfWifiConfig.PassPhrase;
+                networkConfig.EncryptConfig = mfWifiConfig.UseEncryption;
+                networkConfig.NetworkKey = mfWifiConfig.NetworkKey;
+                networkConfig.NetworkKeyLength = mfWifiConfig.NetworkKeyLength;
+                networkConfig.ReKeyInternal = mfWifiConfig.ReKeyInternal;
+                networkConfig.SSID = mfWifiConfig.SSID;
             }
         }
 
         void SaveNetworkSettings(bool logToConsole = true)
         {
-            MFNetworkConfiguration mfNetConfig = new MFNetworkConfiguration();
+            var mfNetConfig = new MFNetworkConfiguration();
             mfNetConfig.Load(networkManager);
 
-            mfNetConfig.IpAddress = networkConfig.StaticIPAddress;
-            mfNetConfig.SubNetMask = networkConfig.SubnetMask;
-            mfNetConfig.PrimaryDns = networkConfig.PrimaryDNS;
+            mfNetConfig.IpAddress   = networkConfig.StaticIPAddress;
+            mfNetConfig.SubNetMask  = networkConfig.SubnetMask;
+            mfNetConfig.PrimaryDns  = networkConfig.PrimaryDNS;
             mfNetConfig.SecondaryDns = networkConfig.SecondaryDNS;
-            mfNetConfig.Gateway = networkConfig.DefaultGateway;
-            mfNetConfig.MacAddress = networkConfig.NetworkMacAddress;
-            mfNetConfig.EnableDhcp = networkConfig.EnableDHCP;
+            mfNetConfig.Gateway     = networkConfig.DefaultGateway;
+            mfNetConfig.MacAddress  = networkConfig.NetworkMacAddress;
+            mfNetConfig.EnableDhcp  = networkConfig.EnableDHCP;
             mfNetConfig.ConfigurationType = networkConfig.IsWireless ? MFNetworkConfiguration.NetworkConfigType.Wireless : MFNetworkConfiguration.NetworkConfigType.Generic;
 
             if (networkConfig.IsWireless)
             {
-                MFWirelessConfiguration mfWifiConfig = new MFWirelessConfiguration();
+                var mfWifiConfig = new MFWirelessConfiguration();
                 mfWifiConfig.Load(networkManager);
 
-                mfWifiConfig.Authentication =networkConfig.Authentication;
-                mfWifiConfig.Encryption = networkConfig.Encryption;
-                mfWifiConfig.Radio = networkConfig.Radio;
-                mfWifiConfig.PassPhrase = networkConfig.Passphrase;
-                mfWifiConfig.UseEncryption = networkConfig.EncryptConfig;
-                mfWifiConfig.NetworkKeyLength = networkConfig.NetworkKeyLength;
-                mfWifiConfig.NetworkKey = networkConfig.NetworkKey;
-                mfWifiConfig.ReKeyLength = networkConfig.ReKeyInternal.Length / 2;
-                mfWifiConfig.ReKeyInternal = networkConfig.ReKeyInternal;
-                mfWifiConfig.SSID = networkConfig.SSID;
+                mfWifiConfig.Authentication = networkConfig.Authentication;
+                mfWifiConfig.Encryption     = networkConfig.Encryption;
+                mfWifiConfig.Radio          = networkConfig.Radio;
+                mfWifiConfig.PassPhrase     = networkConfig.Passphrase;
+                mfWifiConfig.UseEncryption  = networkConfig.EncryptConfig;
+                mfWifiConfig.NetworkKeyLength = (int)Math.Pow(2, networkConfig.NetworkKeyLength) * 64;
+                mfWifiConfig.NetworkKey     = networkConfig.NetworkKey;
+                mfWifiConfig.ReKeyLength    = networkConfig.ReKeyInternal.Length / 2;
+                mfWifiConfig.ReKeyInternal  = networkConfig.ReKeyInternal;
+                mfWifiConfig.SSID           = networkConfig.SSID;
 
                 mfWifiConfig.Save(networkManager);
             }
@@ -183,28 +250,37 @@ namespace NetduinoDeploy
             }
         }
 
-        void Initialize ()
+        void Initialize()
         {
-            var keyTypes = new string[]{ "64-bit", "128-bit", "256-bit", "512-bit", "1024-bit", "2048-bit" };
-            var encryptionTypes = new string[] { "None", "WEP", "WPA", "WPAPSK", "Certificate" };
-            var authenticationTypes = new string[] { "None", "EAP", "PEAP", "WCN", "Open", "Shared" };
 
-            foreach(var key in keyTypes)
-                NetworkKeyTypes.Add(key);
-
-            foreach (var enc in encryptionTypes)
-                EncryptionTypes.Add(enc);
-
-            foreach (var auth in authenticationTypes)
-                AuthenticationTypes.Add(auth);
         }
 
-        void EnableWifiSettings()
+        bool IsRadioEnabled(MFWirelessConfiguration.RadioTypes radioType)
         {
-            
+            if (networkConfig == null)
+                return false;
 
+            return (networkConfig.Radio & (int)radioType) != 0 ? true : false;
+        }
 
+        void UpdateNetworkConfigRadio (MFWirelessConfiguration.RadioTypes type, bool isEnabled) //TODO!
+        {
+            if (networkConfig == null)
+                return;
 
+            if (isEnabled == IsRadioEnabled(type))
+                return;
+
+            networkConfig.Radio += (isEnabled ? (int)type : -(int)type);
+        }
+
+        int GetNetworkTypeIndex(int keyLength)
+        {
+            var index = NetworkKeyTypes.IndexOf(networkConfig.NetworkKeyLength + "-bit");
+            if(index < 0 || index >= NetworkKeyTypes.Count)
+                index = 0;
+
+            return index;
         }
     }
 }

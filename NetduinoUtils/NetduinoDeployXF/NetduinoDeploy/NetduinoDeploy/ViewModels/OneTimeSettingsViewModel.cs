@@ -9,34 +9,41 @@ namespace NetduinoDeploy
 {
     public class OneTimeSettingsViewModel : ViewModelBase
     {
-        public List<string> Models { get; private set; } = new List<string>();
+        public List<string> Devices { get; private set; } = new List<string>();
         public int SelectedDeviceIndex { get; private set; }
 
-        public string SelectedDeviceType
+        public string SelectedDevice
         {
-            get => _selectedDeviceType;
+            get => _selectedDevice;
             set
             {
-                _selectedDeviceType = value;
-                OnPropertyChanged("SelectedDeviceType");
+                _selectedDevice = value;
+                ValidateDevice(_selectedDevice);
+                OnPropertyChanged("SelectedDevice");
             }
         }
-        string _selectedDeviceType;
-
-        public string SelectedDevice { get; private set; }
+        string _selectedDevice;
 
         public string MacAddress { get; private set; }
-     //   {
-         //   get => _macAddress;
-         //   set => ValidateMacAddress(value);
-      //  }
-        //string _macAddress = "00:00:00:00:00";
 
         public string Status { get; private set; }
+
+        public bool CanSave
+        {
+            get => _canSave;
+            set
+            {
+                _canSave = value;
+                OnPropertyChanged("CanSave");
+            }
+        }
+        bool _canSave = false;
 
         public Command CommitSettingsSelected { get; set; }
 
         Regex _macAddressRegex = new Regex("^ ([0 - 9A - Fa - f]{2}[:]){5}([0 - 9A - Fa - f]{2})$");
+
+        string ADD_DEVICE_TYPE = "[Select Device Type]";
 
         public OneTimeSettingsViewModel ()
         {
@@ -47,8 +54,12 @@ namespace NetduinoDeploy
 
         void OnCommitSettings()
         {
-            Status = $"OnCommitSettings pressed at {DateTime.Now.TimeOfDay}";
-            OnPropertyChanged("Status");
+            var settings = new OtpSettings();
+            settings.ProductID = Convert.ToByte(Globals.DeviceTypes.SingleOrDefault(x => x.Name == SelectedDevice).ProductID);
+            settings.MacAddress = MacAddress.Split(':').Select(x => Convert.ToByte(x, 16)).ToArray();
+
+            var manager = new OtpManager();
+            manager.SaveOtpSettings(settings);
         }
 
         bool ValidateMacAddress (string macAddress)
@@ -62,20 +73,17 @@ namespace NetduinoDeploy
         {
             var deviceCount = DfuContext.Current?.GetDevices().Count;
 
-            byte productId = 0;
-            
             if (deviceCount == 1)
             {
                 var settings = new OtpManager().GetOtpSettings();
-                productId = settings.ProductID;
 
-                LoadDeviceList(productId);
+                LoadDeviceList(Globals.ConnectedDeviceId = settings.ProductID);
 
                 MacAddress = BitConverter.ToString(settings.MacAddress).Replace('-', ':');
                 Status = string.Format("Device settings can be saved {0} more time{1}", settings.FreeSlots, settings.FreeSlots > 1 ? "s" : "");
 
                 //lazy but probably the right call
-                OnPropertyChanged(null);
+                RaiseAllPropertiesChanged();
             }
             else
             {
@@ -85,23 +93,35 @@ namespace NetduinoDeploy
 
         void LoadDeviceList(int productId = 0)
         {
-            Models.Clear();
-            Models.Add("[Select Device Type]");
+            Devices.Clear();
+            Devices.Add(ADD_DEVICE_TYPE);
 
             foreach (var device in Globals.DeviceTypes)
             {
-                Models.Add(device.Name);
+                Devices.Add(device.Name);
             }
 
             if (productId > 0)
             {
-                string productName = Globals.DeviceTypes.Single(x => x.ProductID == productId).Name;
+                var deviceType = Globals.GetDeviceFromId(productId);
 
-                //Not needed for Forms picker but I'll leave it here just in case the UI changes in the future 
-                //SelectedDeviceIndex = Models.IndexOf(productName);
+                SelectedDevice = deviceType.Name;
 
-                SelectedDeviceType = productName; // Globals.DeviceTypes.SingleOrDefault(x => x.Name == DeviceType.ItemAtIndex(SelectedDeviceIndex).Title);
+                CanSave = deviceType.HasMacAddress;
             }
+        }
+
+      
+        void ValidateDevice(string deviceName)
+        {
+            Device device = null;
+
+            if (deviceName != ADD_DEVICE_TYPE && Globals.DeviceTypes.Count > 0)
+            {
+                device = Globals.DeviceTypes.Single(x => x.Name == deviceName);
+            }
+
+            CanSave = (device != null) ? device.HasMacAddress : false;
         }
     }
 }

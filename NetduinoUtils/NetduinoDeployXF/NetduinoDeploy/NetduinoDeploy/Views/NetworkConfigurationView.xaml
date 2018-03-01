@@ -15,10 +15,10 @@
                Grid.Column="0" Grid.Row="1" />
         <Entry x:Name="entryGateway" Text="{Binding DefaultGateway}"
                Grid.Column="1" Grid.Row="1" />
-        <Label Text="Mac Address:"
+     <!--   <Label Text="Mac Address:"
                Grid.Column="2" Grid.Row="1" />
         <Entry x:Name="entryMacAddress" Text="{Binding MacAddress}"
-               Grid.Column="3" Grid.Row="1" />
+               Grid.Column="3" Grid.Row="1" /> -->
 
         <Label Text="Primary DNS:"  
                 Grid.Row="2" />
@@ -44,69 +44,67 @@
             <StackLayout Orientation="Horizontal" 
                 Grid.Column="0">
                 <Label Text="802.11a:" />
-                <Switch x:Name="switch80211a" IsToggled="{Binding Is80211aEnabled}" />
+                <Switch x:Name="switch80211a" IsToggled="{Binding Is80211aEnabled}" IsEnabled="{Binding IsWireless}" />
             </StackLayout>
 
             <StackLayout Orientation="Horizontal" 
                 Grid.Column="1">
                 <Label Text="802.11b:" />
-                <Switch x:Name="switch80211b" IsToggled="{Binding Is80211bEnabled}" />
+                <Switch x:Name="switch80211b" IsToggled="{Binding Is80211bEnabled}" IsEnabled="{Binding IsWireless}" />
             </StackLayout>
 
             <StackLayout Orientation="Horizontal" 
                 Grid.Column="2">
                 <Label Text="802.11g:" />
-                <Switch x:Name="switch80211g" IsToggled="{Binding Is80211gEnabled}" />
+                <Switch x:Name="switch80211g" IsToggled="{Binding Is80211gEnabled}" IsEnabled="{Binding IsWireless}" />
             </StackLayout>
 
             <StackLayout Orientation="Horizontal" 
                 Grid.Column="3">
                 <Label Text="802.11n:" />
-                <Switch x:Name="switch80211n" IsToggled="{Binding Is80211nEnabled}" />
+                <Switch x:Name="switch80211n" IsToggled="{Binding Is80211nEnabled}" IsEnabled="{Binding IsWireless}" />
             </StackLayout>
 
         </Grid>
 
         <Label Text="Authentication:"  
                Grid.Column="0" Grid.Row="6" />
-        <Picker x:Name="pickerAuthentication" ItemsSource="{Binding AuthenticationTypes}"
+        <Picker x:Name="pickerAuthentication" ItemsSource="{Binding AuthenticationTypes}" SelectedItem="{Binding SelectedAuthenticationType}" IsEnabled="{Binding IsWireless}"
                Grid.Column="1" Grid.Row="6" />
         <Label Text="SSID:"
                Grid.Column="2" Grid.Row="6" />
-        <Entry x:Name="entrySSID" Placeholder="Network Name"
+        <Entry x:Name="entrySSID" Placeholder="Network Name" Text="{Binding SSID}" IsEnabled="{Binding IsWireless}"
                Grid.Column="3" Grid.Row="6" />
 
         <Label Text="Encryption:"  
                Grid.Column="0" Grid.Row="7" />
-        <Picker x:Name="pickerEncryption" ItemsSource="{Binding EncryptionTypes}"
+        <Picker x:Name="pickerEncryption" ItemsSource="{Binding EncryptionTypes}"  SelectedItem="{Binding SelectedEncryptionType}" IsEnabled="{Binding IsWireless}"
                Grid.Column="1" Grid.Row="7" />
         <Label Text="Pass phrase:"
                Grid.Column="2" Grid.Row="7" />
-        <Entry x:Name="entryPassPhrase" 
+        <Entry x:Name="entryPassPhrase" Text="{Binding PassPhrase}" IsEnabled="{Binding IsWireless}" IsPassword="true"
                Grid.Column="3" Grid.Row="7" />
 
         <Label Text="Network Key:"  
                Grid.Column="0" Grid.Row="8" />
-        <Picker x:Name="pickerNetworkKey" ItemsSource="{Binding NetworkKeyTypes}"
+        <Picker x:Name="pickerNetworkKey" ItemsSource="{Binding NetworkKeyTypes}"  SelectedItem="{Binding SelectedNetworkKeyType}"  IsEnabled="{Binding IsWireless}"
                Grid.Column="1" Grid.Row="8" />
-        <Entry x:Name="entryNetworkKey" Placeholder="Network Key Value"
+        <Entry x:Name="entryNetworkKey" Placeholder="Network Key Value" Text="{Binding NetworkKey}" IsEnabled="{Binding IsWireless}"
                Grid.Column="2" Grid.Row="8" Grid.ColumnSpan="2" />
 
         <Label Text="Re-key Interval:" 
                Grid.Column="0" Grid.Row="9" />
-        <Entry x:Name="entryReKeyInterval" 
+        <Entry x:Name="entryReKeyInterval" Text="{Binding ReKeyInterval}" IsEnabled="{Binding IsWireless}"
                Grid.Column="1" Grid.Row="9" />
         <Label Text="Encrypt Config:" 
                Grid.Column="2" Grid.Row="9" />
-        <Switch x:Name="switchEncryptConfig" 
+        <Switch x:Name="switchEncryptConfig" IsToggled="{Binding UseEncryptConfig}" IsEnabled="{Binding IsWireless}"
                Grid.Column="3" Grid.Row="9" />
 
         <Grid Grid.Row="10" Grid.ColumnSpan="4">
-            <Button x:Name="btnUpdate" Text="Update"
-                Grid.Column="3" />
-
-            <Button x:Name="btnCancel" Text="Cancel"
+            <Button x:Name="btnUpdate" Text="Update" Command="{Binding UpdateSelected}"
                 Grid.Column="4" />
+
         </Grid>
 
     </Grid>

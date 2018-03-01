@@ -56,7 +56,7 @@ namespace NetduinoDeploy.Managers
 		// Initialize the internal structures.
 		public void InitializeConfigData()
 		{
-			uint hal_config_block_size = 0;
+            uint hal_config_block_size = 0;
 			uint hal_config_static_size = 0;
 			int index = 0;
 
@@ -76,7 +76,7 @@ namespace NetduinoDeploy.Managers
 				}
 
 				var devices = DfuContext.Current.GetDevices();
-				DfuDevice device = devices[0];
+				var device = devices[0];
 
 				all_cfg_data = new byte[hal_static_cfg_size];
 

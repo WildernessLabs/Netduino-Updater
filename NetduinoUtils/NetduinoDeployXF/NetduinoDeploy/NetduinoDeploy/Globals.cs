@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace NetduinoDeploy
@@ -25,6 +26,11 @@ namespace NetduinoDeploy
 
         public static List<Device> DeviceTypes { get; set; }
 
-        
+        public static Device GetDeviceFromId (int productId)
+        {
+            return DeviceTypes.Single(x => x.ProductID == productId);
+        }
+
+        public static int ConnectedDeviceId { get; set; } = -1;
     }
 }

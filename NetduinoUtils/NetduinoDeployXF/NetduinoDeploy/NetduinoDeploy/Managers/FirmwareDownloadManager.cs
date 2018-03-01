@@ -13,15 +13,16 @@ namespace NetduinoDeploy.Managers
     {
         string firmwareStatusUrl = "http://downloads.wildernesslabs.co/firmware_version.json";
 
+        public string FirmwareVersion { get; private set; }
+        public string FirmwareFilename { get; private set; }
+
+        public string FirmwareDownloadUrl { get; private set; }
+
         public async Task DownloadFirmware()
         {
             var client = new HttpClient();
 
             int retryCount = 0;
-
-            var firmwareDownloadUrl = string.Empty;
-            var firmwareVersion = string.Empty;
-            var firmwareFilename = string.Empty;
 
             Debug.WriteLine("Checking for firmware updates");
 
@@ -34,9 +35,9 @@ namespace NetduinoDeploy.Managers
 
                     var firmwareUpdate = JObject.Parse(json);
 
-                    firmwareDownloadUrl = firmwareUpdate["url"].ToString();
-                    firmwareFilename = Path.GetFileName(firmwareDownloadUrl);
-                    firmwareVersion = firmwareUpdate["version"].ToString();
+                    FirmwareDownloadUrl = firmwareUpdate["url"].ToString();
+                    FirmwareFilename = Path.GetFileName(FirmwareDownloadUrl);
+                    FirmwareVersion = firmwareUpdate["version"].ToString();
 
                     break;
                 }
@@ -56,7 +57,7 @@ namespace NetduinoDeploy.Managers
                 Directory.CreateDirectory(workingPath);
             }
 
-            if (File.Exists(Path.Combine(workingPath, firmwareFilename)))
+            if (File.Exists(Path.Combine(workingPath, FirmwareFilename)))
             {
                 Debug.WriteLine("No firmware updates found");
             }
@@ -71,11 +72,11 @@ namespace NetduinoDeploy.Managers
                     {
                         var webClient = new WebClient();
 
-                        await webClient.DownloadFileTaskAsync(new Uri(firmwareDownloadUrl), Path.Combine(workingPath, firmwareFilename));
+                        await webClient.DownloadFileTaskAsync(new Uri(FirmwareDownloadUrl), Path.Combine(workingPath, FirmwareFilename));
 
                         Debug.WriteLine("Finished firmware download");
 
-                        using (var zip = ZipFile.Read(Path.Combine(workingPath, firmwareFilename)))
+                        using (var zip = ZipFile.Read(Path.Combine(workingPath, FirmwareFilename)))
                         {
                             zip.ExtractAll(workingPath);
                         }

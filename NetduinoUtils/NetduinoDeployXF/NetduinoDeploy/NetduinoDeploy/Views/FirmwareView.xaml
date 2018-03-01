@@ -5,7 +5,7 @@
     <Grid Margin="10">
         <StackLayout Orientation="Horizontal">
             <Label Text="LatestFirmware: " />
-            <Label x:Name="lblFirmwareVersion" Text="0.0.0.0" />
+            <Label x:Name="lblFirmwareVersion" Text="{Binding FirmwareVersion}" />
         </StackLayout>
         
         <Button x:Name="btnInstallLatestFirmware" Text="Install Latest Firmware" 
@@ -16,7 +16,7 @@
         <Button x:Name="btnChoose" Text="Choose" 
                 Grid.Row="1" Grid.Column="2"/>
 
-        <Label Text="Config File:"
+        <Label Text="Config File:" 
                Grid.Row="2" />
 
         <Label Text="{Binding ConfileFile}"

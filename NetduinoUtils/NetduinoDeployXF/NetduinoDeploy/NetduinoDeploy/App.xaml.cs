@@ -10,12 +10,7 @@ namespace NetduinoDeploy
 	{
 		public App ()
 		{
-          //  var devices = LibUsbDotNet.UsbDevice.AllDevices;
-            
-
-          //  DfuContext.Init();
-
-			InitializeComponent();
+    		InitializeComponent();
 
 			MainPage = new NetduinoDeploy.MainPage();
 		}

@@ -28,13 +28,28 @@ namespace NetduinoDeploy
         }
         string _bootFile;
 
+        public string FirmwareVersion
+        {
+            get => firmwareDownloader.FirmwareVersion;
+        }
+
+        FirmwareDownloadManager firmwareDownloader;
         Task firmwareTask;
 
         public FirmwareViewModel()
         {
-            var firmwareDownloader = new FirmwareDownloadManager();
+            firmwareDownloader = new FirmwareDownloadManager();
 
             firmwareTask = firmwareDownloader.DownloadFirmware();
+
+            InitUI();
+        }
+
+        async void InitUI()
+        {
+            await firmwareTask;
+
+            RaiseAllPropertiesChanged();
         }
 
         string GetDisplayString(string text, int maxLength)
