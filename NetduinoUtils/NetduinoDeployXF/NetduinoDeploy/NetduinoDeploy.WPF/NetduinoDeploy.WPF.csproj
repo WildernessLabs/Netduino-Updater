@@ -126,7 +126,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <Import Project="..\NetduinoDeploy\NetduinoDeploy\NetduinoFirmware.projitems" Label="Shared" />
+  <Import Project="..\NetduinoDeploy\NetduinoFirmware.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
