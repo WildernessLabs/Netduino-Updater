@@ -24,7 +24,7 @@ namespace NetduinoDeploy
                                                          defaultBindingMode: BindingMode.TwoWay,
                                                          propertyChanged: IsExpandedPropertyChanged);
 
-        public SectionHeaderView ()
+          public SectionHeaderView ()
 		{
 			InitializeComponent ();
 
@@ -33,11 +33,7 @@ namespace NetduinoDeploy
 
         void BtnCollapseExpand_Clicked(object sender, System.EventArgs e)
         {
-            IsExpanded = !IsExpanded;
-
-            btnCollapseExpand.Text = IsExpanded ? "▲" : "▼";
-
-            SetValue(IsExpandedProperty, IsExpanded);
+           SetValue(IsExpandedProperty, !IsExpanded);
         }
 
         static void TitlePropertyChanged(BindableObject bindable, object oldValue, object newValue)
@@ -51,7 +47,7 @@ namespace NetduinoDeploy
             var control = (SectionHeaderView)bindable;
             control.IsExpanded = (bool)newValue;
 
-            control.btnCollapseExpand.Text = control.IsExpanded ? "▲" : "▼";
+            control.btnCollapseExpand.Text = control.IsExpanded ? " ▲ " : " ▼ ";
         }
     }
 }

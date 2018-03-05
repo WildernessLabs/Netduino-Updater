@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Xamarin.Forms;
 
 namespace NetduinoDeploy
 {
@@ -15,6 +16,11 @@ namespace NetduinoDeploy
         protected void RaiseAllPropertiesChanged()
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
+        }
+
+        protected void SendConsoleMessage (string message)
+        {
+            MessagingCenter.Send(this, "Console", message);
         }
     }
 }

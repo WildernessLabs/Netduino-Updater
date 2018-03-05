@@ -9,8 +9,8 @@
         <StackLayout Padding="0, 0, 15, 0">
             <Grid Padding="10">
                 <Button x:Name="btnRefresh" Text="Refresh" HorizontalOptions="Start" />
-                <Label Text="Netduino Deploy" HorizontalOptions="Center" />
-                <Image Source="wl_logo_sm.png" HorizontalOptions="End" />
+                <Label Text="Netduino Deploy" FontSize="Medium" HorizontalOptions="Center" />
+                <Image Source="wl_logo_sm.png" HorizontalOptions="End" WidthRequest="104" />
             </Grid>
 
             <local:SectionHeaderView x:Name="headerOneTime" Title="One Time Programmable (OTP) Settings" />

@@ -18,6 +18,8 @@ namespace NetduinoDeploy.Managers
 
         public string FirmwareDownloadUrl { get; private set; }
 
+        public bool IsNewFirmwareAvailable { get; private set; } = false;
+
         public async Task DownloadFirmware()
         {
             var client = new HttpClient();
@@ -81,6 +83,8 @@ namespace NetduinoDeploy.Managers
                             zip.ExtractAll(workingPath);
                         }
 
+                        IsNewFirmwareAvailable = true;
+
                         break;
                     }
                     catch (Exception)
@@ -91,7 +95,6 @@ namespace NetduinoDeploy.Managers
                     }
                 }
             }
-         //   InvokeOnMainThread(() => FirmwareStatus.StringValue = string.Format("Firmware downloaded ({0})", firmwareVersion));
         }
     }
 }

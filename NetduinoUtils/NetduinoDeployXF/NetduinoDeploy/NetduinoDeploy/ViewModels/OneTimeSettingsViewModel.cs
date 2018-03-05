@@ -82,11 +82,12 @@ namespace NetduinoDeploy
                 MacAddress = BitConverter.ToString(settings.MacAddress).Replace('-', ':');
                 Status = string.Format("Device settings can be saved {0} more time{1}", settings.FreeSlots, settings.FreeSlots > 1 ? "s" : "");
 
-                //lazy but probably the right call
+                //lazy but probably about right
                 RaiseAllPropertiesChanged();
             }
             else
             {
+                SendConsoleMessage("No conected devices found");
                 LoadDeviceList();
             }
         }
@@ -106,11 +107,11 @@ namespace NetduinoDeploy
                 var deviceType = Globals.GetDeviceFromId(productId);
 
                 SelectedDevice = deviceType.Name;
+                SendConsoleMessage($"Device connected: {deviceType.Name}");
 
                 CanSave = deviceType.HasMacAddress;
             }
         }
-
       
         void ValidateDevice(string deviceName)
         {

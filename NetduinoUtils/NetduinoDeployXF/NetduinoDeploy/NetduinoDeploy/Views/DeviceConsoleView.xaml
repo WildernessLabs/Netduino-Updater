@@ -2,20 +2,22 @@
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NetduinoDeploy.DeviceConsoleView">
-    <StackLayout Margin="10">
-        <Frame OutlineColor="#979797" BackgroundColor="#EEEEEE" 
-               Grid.ColumnSpan="5" Padding="2">
-            <Label x:Name="lblConsole" Text="Console output" LineBreakMode="WordWrap" HeightRequest="200" Margin="10" />
-        </Frame>
+    <Grid RowSpacing="5" ColumnSpacing="5" Padding="10,5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        
+        <Frame OutlineColor="#979797" BackgroundColor="#EEEEEE"
+            Grid.Row="0" Grid.ColumnSpan="5"/>
+        <Label x:Name="lblConsole" Text="{Binding ConsoleOutput}" LineBreakMode="WordWrap" HeightRequest="200" Margin="5"
+            Grid.Row="0" Grid.ColumnSpan="5"/>
 
-        <Grid>
-            <Button x:Name="btnClear" Text="Clear"
-                Grid.Column="3" />
+        <Button x:Name="btnClear" Text="Clear" Command="OnClearSelected"
+            Grid.Row="1" Grid.Column="3" />
 
-            <Button x:Name="btnSave" Text="Save"
-                Grid.Column="4" />
-        </Grid>
-
-    </StackLayout>
+        <Button x:Name="btnSave" Text="Save"
+            Grid.Row="1" Grid.Column="4" />
+    </Grid>
 
 </ContentView>

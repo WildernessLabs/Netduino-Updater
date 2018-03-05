@@ -6,7 +6,7 @@
         <Grid Padding="10,5">
             <Label x:Name="lblSectionTitle" Text="Title" TextColor="White" FontSize="Medium" HorizontalOptions="Start"/>
             <Button x:Name="btnCollapseExpand" 
-                    Text="▲" TextColor="White" 
+                    Text=" ▲ " TextColor="White" 
                     BorderColor="White" BorderWidth="2" BorderRadius="4" 
                     BackgroundColor="Transparent" 
                     HorizontalOptions="End" />

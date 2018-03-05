@@ -14,7 +14,9 @@ namespace NetduinoDeploy
 	{
 		public DeviceConsoleView ()
 		{
-			InitializeComponent ();
+            this.BindingContext = new DeviceConsoleViewModel();
+
+            InitializeComponent ();
 		}
 	}
 }
