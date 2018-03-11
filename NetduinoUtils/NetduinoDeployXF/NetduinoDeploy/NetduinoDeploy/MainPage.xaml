@@ -8,8 +8,9 @@
     <ScrollView>
         <StackLayout Padding="0, 0, 15, 0">
             <Grid Padding="10">
-                <Button x:Name="btnRefresh" Text="Refresh" HorizontalOptions="Start" />
+             <!-- <Button x:Name="btnRefresh" Text=" Refresh " HorizontalOptions="Start" VerticalOptions="Center" /> -->
                 <Label Text="Netduino Deploy" FontSize="Medium" HorizontalOptions="Center" />
+                <Label Text="2.0.0 alpha" HorizontalOptions="Center" VerticalOptions="End" TextColor="#666666" />
                 <Image Source="wl_logo_sm.png" HorizontalOptions="End" WidthRequest="104" />
             </Grid>
 

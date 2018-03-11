@@ -13,7 +13,7 @@ namespace NetduinoDeploy
 	{
 		public OneTimeSettingsView ()
 		{
-            BindingContext = new OneTimeSettingsViewModel();
+            BindingContext = NetworkConfigurationViewModel.GetInstance();
 
             InitializeComponent ();
 		}

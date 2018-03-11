@@ -12,9 +12,11 @@ namespace NetduinoDeploy
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class DeviceConsoleView : ContentView
 	{
+        DeviceConsoleViewModel vm = new DeviceConsoleViewModel();
+
 		public DeviceConsoleView ()
 		{
-            this.BindingContext = new DeviceConsoleViewModel();
+            this.BindingContext = vm;
 
             InitializeComponent ();
 		}

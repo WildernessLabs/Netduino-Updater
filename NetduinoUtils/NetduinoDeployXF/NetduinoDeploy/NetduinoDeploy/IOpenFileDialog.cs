@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace NetduinoDeploy
+﻿namespace NetduinoDeploy
 {
-    interface IOpenFileDialog
+    public interface IOpenFileDialog
     {
+        string[] FileNames { get; }
+
         bool ShowDialog(string filter);
     }
 }

@@ -19,19 +19,19 @@
         <Label Text="Config File:" 
                Grid.Row="2" />
 
-        <Label Text="{Binding ConfileFile}"
+        <Label Text="{Binding ConfigFile}" HorizontalTextAlignment="End"
                Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" />
 
         <Label Text="Flash File:"
                Grid.Row="3" />
 
-        <Label Text="{Binding FlashFile}"
+        <Label Text="{Binding FlashFile}" HorizontalTextAlignment="End"
                Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" />
 
         <Label Text="Boot File:"
                Grid.Row="4" />
 
-        <Label Text="{Binding BootFile}"
+        <Label Text="{Binding BootFile}" HorizontalTextAlignment="End"
                Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" />
 
 

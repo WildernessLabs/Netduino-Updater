@@ -1,6 +1,7 @@
 ﻿using NetduinoDeploy.Managers;
 using NetduinoFirmware;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -13,21 +14,34 @@ namespace NetduinoDeploy
         public string ConfigFile
         {
             get => GetDisplayString(_configFile, maxFileStringLen);
-            set => _configFile = value;
+            set
+            {
+                _configFile = value;
+                OnPropertyChanged();
+            }
+                
         }
         string _configFile;
 
         public string FlashFile
         {
             get => GetDisplayString(_flashFile, maxFileStringLen);
-            set => _flashFile = value;
+            set
+            {
+                _flashFile = value;
+                OnPropertyChanged();
+            }
         }
         string _flashFile;
 
         public string BootFile
         {
             get => GetDisplayString(_bootFile, maxFileStringLen);
-            set => _bootFile = value;
+            set
+            {
+                _bootFile = value;
+                OnPropertyChanged();
+            }
         }
         string _bootFile;
 
@@ -117,11 +131,36 @@ namespace NetduinoDeploy
         void OnChoose ()
         {
             //move to dependency service later 
-            IOpenFileDialog dialog = new NetduinoDeploy.WPF.OpenFileDialog();
-            
-            var filter = "Netduino firmware (*.s19)|*.s19|Netduino firmware (*.hex)|*.hex|All files (*.*)|*.*";
+            IOpenFileDialog dialog = GetFileDialog();
 
-            dialog.ShowDialog(filter);
+            var filter = "Netduino firmware (*.s19)|*.s19|Netduino firmware (*.hex)|*.hex";
+
+            ConfigFile = FlashFile = BootFile = string.Empty;
+
+            if (dialog.ShowDialog(filter))
+            {
+                if (dialog.FileNames.SingleOrDefault(x => x.ToLower().Contains("er_config")) != null)
+                    ConfigFile = dialog.FileNames.SingleOrDefault(x => x.ToLower().Contains("er_config"));
+
+                if (dialog.FileNames.SingleOrDefault(x => x.ToLower().Contains("er_flash")) != null)
+                    FlashFile = dialog.FileNames.SingleOrDefault(x => x.ToLower().Contains("er_flash"));
+
+                if (dialog.FileNames.SingleOrDefault(x => x.ToLower().Contains("tinybooter")) != null)
+                    BootFile = dialog.FileNames.SingleOrDefault(x => x.ToLower().Contains("tinybooter"));
+            }
+
+            DeploySelected.ChangeCanExecute();
+        }
+
+        IOpenFileDialog GetFileDialog()
+        {
+#if __WPF__
+            return new NetduinoDeploy.WPF.OpenFileDialog();
+#elif __MACOS__
+            return new NetduinoDeploy.macOS.OpenFileDialog();
+#else
+            return null;
+#endif
         }
 
         bool OnCanChoose()
@@ -129,13 +168,33 @@ namespace NetduinoDeploy
             return true;
         }
 
-        void OnDeploy ()
+        async void OnDeploy ()
         {
+            var firmwareManager = new FirmwareManager();
 
+            isUpdating = true;
+            SendConsoleMessage("Staring firmware update");
+
+            firmwareManager.FirmwareUpdateProgress += (status) => SendConsoleMessage($"Updating firmware {status}%");
+
+            try
+            {
+                await firmwareManager.EraseAndUploadDevice(0, (byte)Globals.ConnectedDeviceId, _configFile, _flashFile, _bootFile);
+                SendConsoleMessage("Firmware update successful");
+            }
+            catch (Exception e)
+            {
+                SendConsoleMessage($"Firmware update failed: {e}");
+            }
         }
 
         bool OnCanDeploy ()
         {
+            if (!string.IsNullOrEmpty(ConfigFile) &&
+                !string.IsNullOrEmpty(FlashFile) &&
+                !string.IsNullOrEmpty(BootFile))
+                return true;
+
             return false;
         }
     }

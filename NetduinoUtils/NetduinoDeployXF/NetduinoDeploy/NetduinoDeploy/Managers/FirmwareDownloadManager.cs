@@ -1,11 +1,11 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
-using System.Diagnostics;
 using Newtonsoft.Json.Linq;
 using System.IO;
 using System;
 using System.Net;
 using Ionic.Zip;
+using Xamarin.Forms;
 
 namespace NetduinoDeploy.Managers
 {
@@ -26,7 +26,7 @@ namespace NetduinoDeploy.Managers
 
             int retryCount = 0;
 
-            Debug.WriteLine("Checking for firmware updates");
+            SendConsoleMessage("Checking for firmware updates");
 
             // check for firmware update
             while (true)
@@ -45,7 +45,7 @@ namespace NetduinoDeploy.Managers
                 }
                 catch (Exception)
                 {
-                    Debug.WriteLine("HTTP connection timeout, retrying...");
+                    SendConsoleMessage("HTTP connection timeout, retrying...");
                     retryCount++;
                     await Task.Delay(10000);
                 }
@@ -61,11 +61,11 @@ namespace NetduinoDeploy.Managers
 
             if (File.Exists(Path.Combine(workingPath, FirmwareFilename)))
             {
-                Debug.WriteLine("No firmware updates found");
+                SendConsoleMessage("No firmware updates found");
             }
             else
             {
-                Debug.WriteLine("Started firmware download");
+                SendConsoleMessage("Started firmware download");
                 // download firmware update
                 while (true)
                 {
@@ -76,7 +76,7 @@ namespace NetduinoDeploy.Managers
 
                         await webClient.DownloadFileTaskAsync(new Uri(FirmwareDownloadUrl), Path.Combine(workingPath, FirmwareFilename));
 
-                        Debug.WriteLine("Finished firmware download");
+                        SendConsoleMessage("Finished firmware download");
 
                         using (var zip = ZipFile.Read(Path.Combine(workingPath, FirmwareFilename)))
                         {
@@ -89,12 +89,17 @@ namespace NetduinoDeploy.Managers
                     }
                     catch (Exception)
                     {
-                        Debug.WriteLine("HTTP connection timeout, retrying...");
+                        SendConsoleMessage("HTTP connection timeout, retrying...");
                         retryCount++;
                         await Task.Delay(10000);
                     }
                 }
             }
+        }
+
+        void SendConsoleMessage(string message)
+        {
+            MessagingCenter.Send(this, "Console", message);
         }
     }
 }

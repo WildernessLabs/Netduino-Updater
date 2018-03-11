@@ -40,7 +40,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\NetworkConfigurationViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FirmwareViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelBase.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\OneTimeSettingsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\DeviceConsoleView.xaml.cs">
       <DependentUpon>DeviceConsoleView.xaml</DependentUpon>
       <SubType>Code</SubType>

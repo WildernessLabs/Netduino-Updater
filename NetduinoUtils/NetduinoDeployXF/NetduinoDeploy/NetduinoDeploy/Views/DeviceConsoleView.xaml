@@ -13,11 +13,13 @@
         <Label x:Name="lblConsole" Text="{Binding ConsoleOutput}" LineBreakMode="WordWrap" HeightRequest="200" Margin="5"
             Grid.Row="0" Grid.ColumnSpan="5"/>
 
+        <!--
         <Button x:Name="btnClear" Text="Clear" Command="OnClearSelected"
             Grid.Row="1" Grid.Column="3" />
 
         <Button x:Name="btnSave" Text="Save"
             Grid.Row="1" Grid.Column="4" />
+        -->
     </Grid>
 
 </ContentView>
