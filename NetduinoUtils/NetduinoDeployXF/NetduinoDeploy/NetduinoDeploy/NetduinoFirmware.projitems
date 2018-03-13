@@ -27,7 +27,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Globals.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IOpenFileDialog.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Managers\CRC.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Managers\FirmwareDownloadManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Managers\FirmwareManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Managers\MFNetworkConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Managers\MFWirelessConfig.cs" />
@@ -63,6 +62,7 @@
       <DependentUpon>SectionHeaderView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Managers\FirmwareDownloadManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)DFU\" />

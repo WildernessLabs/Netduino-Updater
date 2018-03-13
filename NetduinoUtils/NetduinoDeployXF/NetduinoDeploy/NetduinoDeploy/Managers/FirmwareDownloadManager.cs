@@ -4,8 +4,8 @@ using Newtonsoft.Json.Linq;
 using System.IO;
 using System;
 using System.Net;
-using Ionic.Zip;
 using Xamarin.Forms;
+using Ionic.Zip;
 
 namespace NetduinoDeploy.Managers
 {
@@ -59,11 +59,11 @@ namespace NetduinoDeploy.Managers
                 Directory.CreateDirectory(workingPath);
             }
 
-            if (File.Exists(Path.Combine(workingPath, FirmwareFilename)))
+         /*   if (File.Exists(Path.Combine(workingPath, FirmwareFilename)))
             {
                 SendConsoleMessage("No firmware updates found");
             }
-            else
+            else */
             {
                 SendConsoleMessage("Started firmware download");
                 // download firmware update
@@ -81,13 +81,13 @@ namespace NetduinoDeploy.Managers
                         using (var zip = ZipFile.Read(Path.Combine(workingPath, FirmwareFilename)))
                         {
                             zip.ExtractAll(workingPath);
-                        }
+                        } 
 
                         IsNewFirmwareAvailable = true;
 
                         break;
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         SendConsoleMessage("HTTP connection timeout, retrying...");
                         retryCount++;

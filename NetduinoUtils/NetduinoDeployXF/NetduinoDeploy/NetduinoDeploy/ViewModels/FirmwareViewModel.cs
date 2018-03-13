@@ -1,5 +1,4 @@
 ﻿using NetduinoDeploy.Managers;
-using NetduinoFirmware;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

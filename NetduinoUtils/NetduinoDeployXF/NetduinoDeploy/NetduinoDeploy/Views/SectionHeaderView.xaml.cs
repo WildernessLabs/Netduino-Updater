@@ -47,7 +47,7 @@ namespace NetduinoDeploy
             var control = (SectionHeaderView)bindable;
             control.IsExpanded = (bool)newValue;
 
-            control.btnCollapseExpand.Text = control.IsExpanded ? " ▲ " : " ▼ ";
+            control.btnCollapseExpand.Text = control.IsExpanded ? "▲" : "▼";
         }
     }
 }

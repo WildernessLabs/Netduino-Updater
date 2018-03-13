@@ -28,7 +28,7 @@ namespace DfuSharp
 	class NativeMethods
 	{
         //const string LIBUSB_LIBRARY = "libusb-1.0";
-        const string LIBUSB_LIBRARY = "libusb-1.0.dll";
+        const string LIBUSB_LIBRARY = "libusb-1.0";
 
         [DllImport(LIBUSB_LIBRARY)]
 		internal static extern int libusb_init(ref IntPtr ctx);
