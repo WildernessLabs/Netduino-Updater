@@ -59,11 +59,11 @@ namespace NetduinoDeploy.Managers
                 Directory.CreateDirectory(workingPath);
             }
 
-         /*   if (File.Exists(Path.Combine(workingPath, FirmwareFilename)))
+            if (File.Exists(Path.Combine(workingPath, FirmwareFilename)))
             {
                 SendConsoleMessage("No firmware updates found");
             }
-            else */
+            else
             {
                 SendConsoleMessage("Started firmware download");
                 // download firmware update
