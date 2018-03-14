@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>{9065E550-F173-451C-9CCF-6B62E5231E21}</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>NetduinoFirmware</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)App.xaml" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)MainPage.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)CollapableView.xaml.cs">
+      <DependentUpon>CollapableView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)DFU\Device.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DFU\DfuContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DFU\DfuSharp.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DFU\Firmware.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Globals.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IOpenFileDialog.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Managers\CRC.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Managers\FirmwareManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Managers\MFNetworkConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Managers\MFWirelessConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Managers\NetworkConfig.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Managers\NetworkManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Managers\OtpFileManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Managers\OtpManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SrexHexEncoding.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DeviceConsoleViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\NetworkConfigurationViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FirmwareViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\DeviceConsoleView.xaml.cs">
+      <DependentUpon>DeviceConsoleView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\FirmwareView.xaml.cs">
+      <DependentUpon>FirmwareView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\NetworkConfigurationView.xaml.cs">
+      <DependentUpon>NetworkConfigurationView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\OneTimeSettingsView.xaml.cs">
+      <DependentUpon>OneTimeSettingsView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\SectionHeaderView.xaml.cs">
+      <DependentUpon>SectionHeaderView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Managers\FirmwareDownloadManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)DFU\" />
+    <Folder Include="$(MSBuildThisFileDirectory)ViewModels\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)CollapableView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\FirmwareView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\NetworkConfigurationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\DeviceConsoleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\OneTimeSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\SectionHeaderView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

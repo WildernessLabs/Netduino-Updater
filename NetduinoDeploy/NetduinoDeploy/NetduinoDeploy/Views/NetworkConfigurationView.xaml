@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NetduinoDeploy.NetworkConfigurationView">
+    <Grid Margin="10" RowSpacing="2" ColumnSpacing="10">
+        <Label Text="Static IP Address:" />
+        <Entry x:Name="entryIPAddress" Text="{Binding StaticIPAddress}" IsEnabled="{Binding IsNetworkCapable}"
+               Grid.Column="1"/>
+        <Label Text="Subnet Mask:" 
+               Grid.Column="2" />
+        <Entry x:Name="entrySubnetMask" Text="{Binding SubnetMask}" IsEnabled="{Binding IsNetworkCapable}"
+               Grid.Column="3" />
+
+        <Label Text="Default Gateway:" 
+               Grid.Column="0" Grid.Row="1" />
+        <Entry x:Name="entryGateway" Text="{Binding DefaultGateway}" IsEnabled="{Binding IsNetworkCapable}"
+               Grid.Column="1" Grid.Row="1" />
+     <!--   <Label Text="Mac Address:"
+               Grid.Column="2" Grid.Row="1" />
+        <Entry x:Name="entryMacAddress" Text="{Binding MacAddress}"
+               Grid.Column="3" Grid.Row="1" /> -->
+
+        <Label Text="Primary DNS:"  
+                Grid.Row="2" />
+        <Entry x:Name="entryPrimaryDNS" Text="{Binding PrimaryDNS}" IsEnabled="{Binding IsNetworkCapable}"
+               Grid.Column="1" Grid.Row="2" />
+        <Label Text="Secondary DNS:"
+               Grid.Column="2" Grid.Row="2" />
+        <Entry x:Name="entrySecondaryDNS" Text="{Binding SecondaryDNS}" IsEnabled="{Binding IsNetworkCapable}"
+               Grid.Column="3" Grid.Row="2" />
+
+        <Label Text="DHCP Enabled:" 
+               Grid.Column="0" Grid.Row="3" />
+        <Switch x:Name="swtichDHCP" IsToggled="{Binding IsDHCPEnabled}" IsEnabled="{Binding IsNetworkCapable}"
+               Grid.Column="1" Grid.Row="3" />
+
+        <Label Text="Wireless Network"  
+                Grid.Column="0" Grid.Row="4" />
+
+        <Label Text="Radio:"  
+                Grid.Column="0" Grid.Row="5" />
+        
+        <Grid Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="3" >
+            <StackLayout Orientation="Horizontal" 
+                Grid.Column="0">
+                <Label Text="802.11a:" />
+                <Switch x:Name="switch80211a" IsToggled="{Binding Is80211aEnabled}" IsEnabled="{Binding IsWireless}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" 
+                Grid.Column="1">
+                <Label Text="802.11b:" />
+                <Switch x:Name="switch80211b" IsToggled="{Binding Is80211bEnabled}" IsEnabled="{Binding IsWireless}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" 
+                Grid.Column="2">
+                <Label Text="802.11g:" />
+                <Switch x:Name="switch80211g" IsToggled="{Binding Is80211gEnabled}" IsEnabled="{Binding IsWireless}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" 
+                Grid.Column="3">
+                <Label Text="802.11n:" />
+                <Switch x:Name="switch80211n" IsToggled="{Binding Is80211nEnabled}" IsEnabled="{Binding IsWireless}" />
+            </StackLayout>
+
+        </Grid>
+
+        <Label Text="Authentication:"  
+               Grid.Column="0" Grid.Row="6" />
+        <Picker x:Name="pickerAuthentication" ItemsSource="{Binding AuthenticationTypes}" SelectedItem="{Binding SelectedAuthenticationType}" IsEnabled="{Binding IsWireless}"
+               Grid.Column="1" Grid.Row="6" />
+        <Label Text="SSID:"
+               Grid.Column="2" Grid.Row="6" />
+        <Entry x:Name="entrySSID" Placeholder="Network Name" Text="{Binding SSID}" IsEnabled="{Binding IsWireless}"
+               Grid.Column="3" Grid.Row="6" />
+
+        <Label Text="Encryption:"  
+               Grid.Column="0" Grid.Row="7" />
+        <Picker x:Name="pickerEncryption" ItemsSource="{Binding EncryptionTypes}"  SelectedItem="{Binding SelectedEncryptionType}" IsEnabled="{Binding IsWireless}"
+               Grid.Column="1" Grid.Row="7" />
+        <Label Text="Pass phrase:"
+               Grid.Column="2" Grid.Row="7" />
+        <Entry x:Name="entryPassPhrase" Text="{Binding PassPhrase}" IsEnabled="{Binding IsWireless}" IsPassword="true"
+               Grid.Column="3" Grid.Row="7" />
+
+        <Label Text="Network Key:"  
+               Grid.Column="0" Grid.Row="8" />
+        <Picker x:Name="pickerNetworkKey" ItemsSource="{Binding NetworkKeyTypes}"  SelectedItem="{Binding SelectedNetworkKeyType}"  IsEnabled="{Binding IsWireless}"
+               Grid.Column="1" Grid.Row="8" />
+        <Entry x:Name="entryNetworkKey" Placeholder="Network Key Value" Text="{Binding NetworkKey}" IsEnabled="{Binding IsWireless}"
+               Grid.Column="2" Grid.Row="8" Grid.ColumnSpan="2" />
+
+        <Label Text="Re-key Interval:" 
+               Grid.Column="0" Grid.Row="9" />
+        <Entry x:Name="entryReKeyInterval" Text="{Binding ReKeyInterval}" IsEnabled="{Binding IsWireless}"
+               Grid.Column="1" Grid.Row="9" />
+        <Label Text="Encrypt Config:" 
+               Grid.Column="2" Grid.Row="9" />
+        <Switch x:Name="switchEncryptConfig" IsToggled="{Binding UseEncryptConfig}" IsEnabled="{Binding IsWireless}"
+               Grid.Column="3" Grid.Row="9" />
+
+        <Grid Grid.Row="10" Grid.ColumnSpan="4">
+            <Button x:Name="btnUpdate" Text="Update" Command="{Binding UpdateSelected}" IsEnabled="{Binding IsNetworkCapable2}"
+                Grid.Column="4" />
+
+        </Grid>
+
+    </Grid>
+</ContentView>
