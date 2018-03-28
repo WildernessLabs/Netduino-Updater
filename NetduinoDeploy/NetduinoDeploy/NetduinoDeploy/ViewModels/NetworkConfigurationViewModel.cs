@@ -209,7 +209,7 @@ namespace NetduinoDeploy
             }
             else
             {
-                SendConsoleMessage("No conected devices found");
+                App.SendConsoleMessage("No conected devices found");
 
                 networkConfig = new NetworkConfig() { IsWireless = false, NetworkMacAddress = null };
 
@@ -302,7 +302,7 @@ namespace NetduinoDeploy
             }
             mfNetConfig.Save(networkManager);
 
-            SendConsoleMessage("Network configuration saved");
+            App.SendConsoleMessage("Network configuration saved");
         }
 
         bool IsRadioEnabled(MFWirelessConfiguration.RadioTypes radioType)
@@ -366,7 +366,7 @@ namespace NetduinoDeploy
                 var deviceType = Globals.GetDeviceFromId(productId);
 
                 SelectedDevice = deviceType.Name;
-                SendConsoleMessage($"Device connected: {deviceType.Name}");
+                App.SendConsoleMessage($"Device connected: {deviceType.Name}");
 
                 CanSave = deviceType.HasMacAddress;
             }

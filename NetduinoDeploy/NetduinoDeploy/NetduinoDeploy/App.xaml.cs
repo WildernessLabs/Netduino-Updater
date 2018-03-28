@@ -11,7 +11,12 @@ namespace NetduinoDeploy
 			MainPage = new NetduinoDeploy.MainPage();
 		}
 
-		protected override void OnStart ()
+        public static void SendConsoleMessage(string logEntry)
+        {
+            MessagingCenter.Send(App.Current, "Console", logEntry);
+        }
+
+        protected override void OnStart ()
 		{
 			// Handle when your app starts
 		}

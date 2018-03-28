@@ -17,10 +17,5 @@ namespace NetduinoDeploy
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
         }
-
-        protected void SendConsoleMessage (string message)
-        {
-            MessagingCenter.Send(this, "Console", message);
-        }
     }
 }

@@ -22,7 +22,7 @@ namespace NetduinoDeploy
         {
             OnClearSelected = new Command(ClearConsole);
 
-            MessagingCenter.Subscribe<ViewModelBase, string>(this, "Console", (sender, message) => DisplayConsoleMessage(message));
+            MessagingCenter.Subscribe<Application, string>(this, "Console", (sender, message) => DisplayConsoleMessage(message));
         }
 
         void DisplayConsoleMessage(string message)

@@ -11,9 +11,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetduinoDeploy.macOS", "Net
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		NetduinoDeploy\NetduinoDeploy\NetduinoFirmware.projitems*{357f40d5-10cb-4ef3-9766-def611a1154f}*SharedItemsImports = 4
 		NetduinoDeploy\NetduinoDeploy\NetduinoFirmware.projitems*{5ec29982-38e8-4cc8-b064-8f8de284ffdf}*SharedItemsImports = 4
 		NetduinoDeploy\NetduinoDeploy\NetduinoFirmware.projitems*{9065e550-f173-451c-9ccf-6b62e5231e21}*SharedItemsImports = 13
+		NetduinoDeploy\NetduinoDeploy\NetduinoFirmware.projitems*{c6020381-c687-4d7a-83ff-dc9a2d58b3a9}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU

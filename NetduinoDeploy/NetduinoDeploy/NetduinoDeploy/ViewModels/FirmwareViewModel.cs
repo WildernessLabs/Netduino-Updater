@@ -73,17 +73,17 @@ namespace NetduinoDeploy
 
         async void InitUI()
         {
-            SendConsoleMessage("Checking for firmware updates");
+            App.SendConsoleMessage("Checking for firmware updates");
 
             await firmwareTask;
             
             if(firmwareDownloader.IsNewFirmwareAvailable)
             {
-                SendConsoleMessage($"Firmware version {firmwareDownloader.FirmwareVersion} available");
+                App.SendConsoleMessage($"Firmware version {firmwareDownloader.FirmwareVersion} available");
             }
             else
             {
-                SendConsoleMessage($"No new firmware available");
+                App.SendConsoleMessage($"No new firmware available");
             }
 
             RaiseAllPropertiesChanged();
@@ -104,18 +104,18 @@ namespace NetduinoDeploy
             var firmwareManager = new FirmwareManager();
 
             isUpdating = true;
-            SendConsoleMessage("Staring firmware update");
+            App.SendConsoleMessage("Staring firmware update");
 
-            firmwareManager.FirmwareUpdateProgress += (status) => SendConsoleMessage($"Updating firmware {status}%");
+            firmwareManager.FirmwareUpdateProgress += (status) => App.SendConsoleMessage($"Updating firmware {status}%");
 
             try
             {
                 await firmwareManager.EraseAndUploadDevice(0, (byte)Globals.ConnectedDeviceId);
-                SendConsoleMessage("Firmware update successful");
+                App.SendConsoleMessage("Firmware update successful");
             }
             catch (Exception e)
             {
-                SendConsoleMessage($"Firmware update failed: {e}");
+                App.SendConsoleMessage($"Firmware update failed: {e}");
             }
         }
 
@@ -172,18 +172,18 @@ namespace NetduinoDeploy
             var firmwareManager = new FirmwareManager();
 
             isUpdating = true;
-            SendConsoleMessage("Staring firmware update");
+            App.SendConsoleMessage("Staring firmware update");
 
-            firmwareManager.FirmwareUpdateProgress += (status) => SendConsoleMessage($"Updating firmware {status}%");
+            firmwareManager.FirmwareUpdateProgress += (status) => App.SendConsoleMessage($"Updating firmware {status}%");
 
             try
             {
                 await firmwareManager.EraseAndUploadDevice(0, (byte)Globals.ConnectedDeviceId, _configFile, _flashFile, _bootFile);
-                SendConsoleMessage("Firmware update successful");
+                App.SendConsoleMessage("Firmware update successful");
             }
             catch (Exception e)
             {
-                SendConsoleMessage($"Firmware update failed: {e}");
+                App.SendConsoleMessage($"Firmware update failed: {e}");
             }
         }
 
