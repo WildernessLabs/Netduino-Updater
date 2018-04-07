@@ -89,7 +89,11 @@ namespace NetduinoDeploy
         public bool IsDHCPEnabled
         {
             get => networkConfig == null?false: networkConfig.EnableDHCP;
-            set => networkConfig.EnableDHCP = value;
+            set
+            {
+                networkConfig.EnableDHCP = value;
+                OnPropertyChanged(nameof(IsNetworkManualConfig));
+            }
         }
 
         public bool Is80211aEnabled
@@ -184,6 +188,11 @@ namespace NetduinoDeploy
         {
             get => (networkConfig == null)?false:networkConfig.IsWireless;
             set { if (networkConfig != null) networkConfig.IsWireless = value; }
+        }
+
+        public bool IsNetworkManualConfig
+        {
+            get => IsNetworkCapable && !IsDHCPEnabled;
         }
 
         public bool IsNetworkCapable => GetIsNetworkCapable();
