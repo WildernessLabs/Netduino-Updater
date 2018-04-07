@@ -106,11 +106,12 @@ namespace NetduinoDeploy
             isUpdating = true;
             App.SendConsoleMessage("Staring firmware update");
 
-            firmwareManager.FirmwareUpdateProgress += (status) => App.SendConsoleMessage($"Updating firmware {status}%");
+            firmwareManager.FirmwareUpdateProgress += (status) => App.SendConsoleMessage($"Updating firmware: {status}");
 
             try
             {
-                await firmwareManager.EraseAndUploadDevice(0, (byte)Globals.ConnectedDeviceId);
+                await Task.Run(()=> firmwareManager.EraseAndUploadDevice(0, (byte)Globals.ConnectedDeviceId) );
+
                 App.SendConsoleMessage("Firmware update successful");
             }
             catch (Exception e)

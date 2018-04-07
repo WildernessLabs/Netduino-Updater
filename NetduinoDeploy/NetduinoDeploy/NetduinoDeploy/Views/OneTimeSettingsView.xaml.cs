@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
+﻿using Xamarin.Forms;
 
 namespace NetduinoDeploy
 {
@@ -13,7 +6,9 @@ namespace NetduinoDeploy
 	{
 		public OneTimeSettingsView ()
 		{
-            BindingContext = NetworkConfigurationViewModel.GetInstance();
+            var vm = NetworkConfigurationViewModel.GetInstance();
+
+            BindingContext = vm;
 
             InitializeComponent ();
 		}

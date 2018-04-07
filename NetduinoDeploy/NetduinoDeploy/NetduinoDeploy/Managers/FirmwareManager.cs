@@ -140,7 +140,7 @@ namespace NetduinoDeploy.Managers
 			return Task.CompletedTask;
 		}
 
-		public Task EraseAndUploadDevice(int deviceIndex, byte productID)
+		public void EraseAndUploadDevice(int deviceIndex, byte productID)
 		{
 			int uploadedByteCount = 0;
 			int totalBytes = 0;
@@ -176,23 +176,24 @@ namespace NetduinoDeploy.Managers
 				device.EraseSector((int)allSectorBaseAddresses[iSector]);
 				eraseProgress = (iSector + 1) * 100 / allSectorBaseAddresses.Count();
 				Debug.WriteLine(CurrentProgress.ToString());
-				RaiseFirmwareUpdateProgress(CurrentProgress.ToString());
+				RaiseFirmwareUpdateProgress($"{CurrentProgress}%");
 			}
 
 			device.Uploading += (sender, e) =>
 			{
 				uploadedByteCount += e.BytesUploaded;
+                uploadedByteCount = Math.Min(uploadedByteCount, totalBytes); //ensure it doesn't exceed 100%
 				uploadProgress = uploadedByteCount * 100 / totalBytes;
 				Debug.WriteLine(CurrentProgress.ToString());
-				RaiseFirmwareUpdateProgress(CurrentProgress.ToString());
-			};
+                RaiseFirmwareUpdateProgress($"{CurrentProgress}%");
+            };
 
 			for (int i = 0; i < firmware.FirmwareRegions.Count; i++)
 			{
 				var region = firmware.FirmwareRegions[i];
 				if (region.Filename != null)
 				{
-					using (System.IO.StreamReader streamReader = new System.IO.StreamReader(firmware.FolderPath + "/" + region.Filename))
+					using (var streamReader = new StreamReader(firmware.FolderPath + "/" + region.Filename))
 					{
 						string hexFileString = streamReader.ReadToEnd();
 						byte[] hexFileBytes = SrecHexEncoding.GetBytes(hexFileString, region.BaseAddress);
@@ -206,7 +207,7 @@ namespace NetduinoDeploy.Managers
 				var region = firmware.FirmwareRegions[i];
 				if (region.Filename != null)
 				{
-					using (System.IO.StreamReader streamReader = new System.IO.StreamReader(firmware.FolderPath + "/" + region.Filename))
+					using (var streamReader = new StreamReader(firmware.FolderPath + "/" + region.Filename))
 					{
 						string hexFileString = streamReader.ReadToEnd();
 						byte[] hexFileBytes = SrecHexEncoding.GetBytes(hexFileString, region.BaseAddress);
@@ -221,7 +222,6 @@ namespace NetduinoDeploy.Managers
 
 			//                                    // leave DFU mode.
 			////device.LeaveDfuMode();
-			return Task.CompletedTask;
 		}
 
 		public delegate void FirmwareUpdateProgressDelegate(string version);
@@ -229,8 +229,7 @@ namespace NetduinoDeploy.Managers
 
 		internal void RaiseFirmwareUpdateProgress(string status)
 		{
-			if (this.FirmwareUpdateProgress != null)
-				this.FirmwareUpdateProgress(status);
+            FirmwareUpdateProgress?.Invoke(status);
 		}
 	}
 }

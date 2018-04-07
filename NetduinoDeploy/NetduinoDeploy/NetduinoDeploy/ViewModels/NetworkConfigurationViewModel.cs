@@ -43,6 +43,7 @@ namespace NetduinoDeploy
         }
         bool _canSave = false;
 
+
         public Command CommitSettingsSelected { get; set; }
 
         Regex _macAddressRegex = new Regex("^ ([0 - 9A - Fa - f]{2}[:]){5}([0 - 9A - Fa - f]{2})$");
@@ -156,8 +157,8 @@ namespace NetduinoDeploy
 
         public bool IsWireless => networkConfig.IsWireless;
 
-        public bool IsNetworkCapable => networkConfig.NetworkMacAddress != null;
-      
+        public bool IsNetworkCapable => GetIsNetworkCapable();
+              
         public Command UpdateSelected { get; set; }
 
         
@@ -201,7 +202,9 @@ namespace NetduinoDeploy
                 else
                     networkConfig = new NetworkConfig();
 
-                MacAddress = BitConverter.ToString(networkConfig.NetworkMacAddress).Replace('-', ':');
+                if(networkConfig.NetworkMacAddress != null)
+                    MacAddress = BitConverter.ToString(networkConfig.NetworkMacAddress).Replace('-', ':');
+
                 Status = string.Format("Device settings can be saved {0} more time{1}", settings.FreeSlots, settings.FreeSlots > 1 ? "s" : "");
 
                 //lazy but probably about right
@@ -382,6 +385,25 @@ namespace NetduinoDeploy
             }
 
             CanSave = (device != null) ? device.HasMacAddress : false;
+        }
+
+        bool GetIsNetworkCapable()
+        {
+            if (networkConfig == null || 
+                networkConfig.NetworkMacAddress == null)
+                return false;
+
+            bool isCapable = false;
+
+            for (int i = 0; i < networkConfig.NetworkMacAddress.Length; i++)
+            {   //check for default (all 255)
+                if (networkConfig.NetworkMacAddress[i] != 255)
+                {
+                    isCapable = true;
+                    break;
+                }
+            }
+            return isCapable;
         }
 
     }
