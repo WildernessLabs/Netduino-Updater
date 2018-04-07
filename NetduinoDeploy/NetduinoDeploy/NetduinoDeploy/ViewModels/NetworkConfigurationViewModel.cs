@@ -384,6 +384,17 @@ namespace NetduinoDeploy
 
         void OnCommitSettings()
         {
+            var address = MacAddress;
+            if (ValidateMacAddress(ref address) == false)
+            {
+                App.SendConsoleMessage("Invalid MAC Address, unable to update");
+                return;
+            }
+            else
+            {
+                MacAddress = address;
+            }
+
             var settings = new OtpSettings
             {
                 ProductID = Convert.ToByte(Globals.DeviceTypes.SingleOrDefault(x => x.Name == SelectedDevice).ProductID),
@@ -408,10 +419,15 @@ namespace NetduinoDeploy
             App.SendConsoleMessage(e);
         }
 
-        bool ValidateMacAddress(string macAddress)
+        bool ValidateMacAddress(ref string macAddress)
         {
-            var result = _macAddressRegex.Match(macAddress);
+            if (macAddress.Length == 12)
+            {
+                for (int i = 10; i > 1; i -= 2)
+                    macAddress = macAddress.Insert(i, ":");
+            }
 
+            var result = _macAddressRegex.Match(macAddress);
             return result.Success;
         }
 
