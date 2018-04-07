@@ -28,7 +28,11 @@ namespace NetduinoDeploy
         }
         string _selectedDevice;
 
-        public string MacAddress { get; private set; }
+        public string MacAddress
+        {
+            get;
+            set;
+        }
 
         public string Status { get; private set; }
 
@@ -240,17 +244,21 @@ namespace NetduinoDeploy
                 else
                     networkConfig = new NetworkConfig();
 
-                if(networkConfig.NetworkMacAddress != null)
-                    MacAddress = BitConverter.ToString(networkConfig.NetworkMacAddress).Replace('-', ':');
+                var optSettings = new OtpManager().GetOtpSettings();
+                MacAddress = BitConverter.ToString(optSettings.MacAddress).Replace('-', ':');
 
                 Status = string.Format("Device settings can be saved {0} more time{1}", settings.FreeSlots, settings.FreeSlots > 1 ? "s" : "");
-
-                //lazy but probably about right
-                RaiseAllPropertiesChanged();
             }
             else
             {
-                App.SendConsoleMessage("No conected devices found");
+                if (deviceCount == 0)
+                {
+                    App.SendConsoleMessage("Please connect a Netduino device in bootloader mode and restart the application");
+                }
+                else if (deviceCount > 1)
+                {
+                    App.SendConsoleMessage("Please connect only one Netduino device in bootloader mode and restart the application");
+                }
 
                 networkConfig = new NetworkConfig() { IsWireless = false, NetworkMacAddress = null };
 
@@ -376,13 +384,28 @@ namespace NetduinoDeploy
 
         void OnCommitSettings()
         {
-            var settings = new OtpSettings();
-
-            settings.ProductID = Convert.ToByte(Globals.DeviceTypes.SingleOrDefault(x => x.Name == SelectedDevice).ProductID);
-            settings.MacAddress = MacAddress.Split(':').Select(x => Convert.ToByte(x, 16)).ToArray();
+            var settings = new OtpSettings
+            {
+                ProductID = Convert.ToByte(Globals.DeviceTypes.SingleOrDefault(x => x.Name == SelectedDevice).ProductID),
+                MacAddress = MacAddress.Split(':').Select(x => Convert.ToByte(x, 16)).ToArray()
+            };
 
             var manager = new OtpManager();
-            manager.SaveOtpSettings(settings);
+
+            manager.StatusUpdated += Manager_StatusUpdated;
+            
+            if (manager.SaveOtpSettings(settings))
+                App.SendConsoleMessage("Settings updated succesfully");
+            else
+                App.SendConsoleMessage("Unable to update device settings");
+
+            manager.StatusUpdated += Manager_StatusUpdated;
+
+        }
+
+        private void Manager_StatusUpdated(object sender, string e)
+        {
+            App.SendConsoleMessage(e);
         }
 
         bool ValidateMacAddress(string macAddress)
