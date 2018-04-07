@@ -86,7 +86,11 @@ namespace NetduinoDeploy
             set => networkConfig.DefaultGateway = networkConfig.ParseAddress(value);
         }
 
-        public bool IsDHCPEnabled => networkConfig.EnableDHCP;
+        public bool IsDHCPEnabled
+        {
+            get => networkConfig == null?false: networkConfig.EnableDHCP;
+            set => networkConfig.EnableDHCP = value;
+        }
 
         public bool Is80211aEnabled
         {
@@ -128,8 +132,11 @@ namespace NetduinoDeploy
             }
         }
 
-        public string SSID => networkConfig?.SSID;
-        
+        public string SSID
+        {
+            get => networkConfig?.SSID;
+            set { if (networkConfig != null) networkConfig.SSID = value; }
+        }
 
         public string SelectedAuthenticationType
         {
@@ -149,13 +156,35 @@ namespace NetduinoDeploy
             set => networkConfig.NetworkKeyLength = NetworkKeyTypes.IndexOf(value);
         }
 
-        public string PassPhrase => networkConfig?.Passphrase;
-        public string NetworkKey => networkConfig?.NetworkKey;
+        public string PassPhrase
+        {
+            get => networkConfig?.Passphrase;
+            set { if (networkConfig != null) networkConfig.Passphrase = value; }
+        }
 
-        public string ReKeyInterval => networkConfig?.ReKeyInternal;
-        public bool UseEncryptConfig => networkConfig.EncryptConfig;
+        public string NetworkKey
+        {
+            get => networkConfig?.NetworkKey;
+            set { if (networkConfig != null) networkConfig.NetworkKey = value; }
+        }
 
-        public bool IsWireless => networkConfig.IsWireless;
+        public string ReKeyInterval
+        { 
+            get => networkConfig?.ReKeyInternal;
+            set { if (networkConfig != null) networkConfig.ReKeyInternal = value; }
+        }
+
+        public bool UseEncryptConfig
+        {
+            get => (networkConfig == null) ? false : networkConfig.EncryptConfig;
+            set { if (networkConfig != null) networkConfig.EncryptConfig = value; }
+        }
+
+        public bool IsWireless
+        {
+            get => (networkConfig == null)?false:networkConfig.IsWireless;
+            set { if (networkConfig != null) networkConfig.IsWireless = value; }
+        }
 
         public bool IsNetworkCapable => GetIsNetworkCapable();
               
