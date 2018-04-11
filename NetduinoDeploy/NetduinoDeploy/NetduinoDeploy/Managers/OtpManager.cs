@@ -171,18 +171,9 @@ namespace NetduinoDeploy.Managers
             var devices = DfuContext.Current.GetDevices();
             DfuDevice device = devices[0];
 
-            device.Uploading += Device_Uploading;
-
             device.Upload(data, 0x1FFF7800, 2);
 
-            device.Uploading -= Device_Uploading;
             return true;
-        }
-
-        void Device_Uploading(object sender, UploadingEventArgs e)
-        {
-            
-
         }
 
         public bool SaveConfiguration(byte productId, byte[] macAddress)
