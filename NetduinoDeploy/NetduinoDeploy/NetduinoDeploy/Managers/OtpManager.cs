@@ -5,6 +5,8 @@ namespace NetduinoDeploy.Managers
 {
     public class OtpManager
     {
+        public event EventHandler<string> StatusUpdated;
+
         byte TOTAL_OTP_SLOTS = 4;
         byte CONFIGURATION_SIZE = 8;
 
@@ -142,8 +144,12 @@ namespace NetduinoDeploy.Managers
                 }
                 if (slotCanBeUsed)
                 {
+                    StatusUpdated?.Invoke(this, "OTA update slot avaliable");
+                    StatusUpdated?.Invoke(this, "OTA update started");
 
-                    return WriteOtp(newOtpConfiguration);
+                    var ret = WriteOtp(newOtpConfiguration);
+
+                    return ret;
                 }
             }
             return false;
@@ -166,6 +172,7 @@ namespace NetduinoDeploy.Managers
             DfuDevice device = devices[0];
 
             device.Upload(data, 0x1FFF7800, 2);
+
             return true;
         }
 

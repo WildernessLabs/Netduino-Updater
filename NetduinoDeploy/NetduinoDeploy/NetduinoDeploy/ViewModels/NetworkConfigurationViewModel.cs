@@ -28,7 +28,11 @@ namespace NetduinoDeploy
         }
         string _selectedDevice;
 
-        public string MacAddress { get; private set; }
+        public string MacAddress
+        {
+            get;
+            set;
+        }
 
         public string Status { get; private set; }
 
@@ -42,6 +46,7 @@ namespace NetduinoDeploy
             }
         }
         bool _canSave = false;
+
 
         public Command CommitSettingsSelected { get; set; }
 
@@ -85,7 +90,15 @@ namespace NetduinoDeploy
             set => networkConfig.DefaultGateway = networkConfig.ParseAddress(value);
         }
 
-        public bool IsDHCPEnabled => networkConfig.EnableDHCP;
+        public bool IsDHCPEnabled
+        {
+            get => networkConfig == null?false: networkConfig.EnableDHCP;
+            set
+            {
+                networkConfig.EnableDHCP = value;
+                OnPropertyChanged(nameof(IsNetworkManualConfig));
+            }
+        }
 
         public bool Is80211aEnabled
         {
@@ -127,8 +140,11 @@ namespace NetduinoDeploy
             }
         }
 
-        public string SSID => networkConfig?.SSID;
-        
+        public string SSID
+        {
+            get => networkConfig?.SSID;
+            set { if (networkConfig != null) networkConfig.SSID = value; }
+        }
 
         public string SelectedAuthenticationType
         {
@@ -148,16 +164,43 @@ namespace NetduinoDeploy
             set => networkConfig.NetworkKeyLength = NetworkKeyTypes.IndexOf(value);
         }
 
-        public string PassPhrase => networkConfig?.Passphrase;
-        public string NetworkKey => networkConfig?.NetworkKey;
+        public string PassPhrase
+        {
+            get => networkConfig?.Passphrase;
+            set { if (networkConfig != null) networkConfig.Passphrase = value; }
+        }
 
-        public string ReKeyInterval => networkConfig?.ReKeyInternal;
-        public bool UseEncryptConfig => networkConfig.EncryptConfig;
+        public string NetworkKey
+        {
+            get => networkConfig?.NetworkKey;
+            set { if (networkConfig != null) networkConfig.NetworkKey = value; }
+        }
 
-        public bool IsWireless => networkConfig.IsWireless;
+        public string ReKeyInterval
+        { 
+            get => networkConfig?.ReKeyInternal;
+            set { if (networkConfig != null) networkConfig.ReKeyInternal = value; }
+        }
 
-        public bool IsNetworkCapable => networkConfig.NetworkMacAddress != null;
-      
+        public bool UseEncryptConfig
+        {
+            get => (networkConfig == null) ? false : networkConfig.EncryptConfig;
+            set { if (networkConfig != null) networkConfig.EncryptConfig = value; }
+        }
+
+        public bool IsWireless
+        {
+            get => (networkConfig == null)?false:networkConfig.IsWireless;
+            set { if (networkConfig != null) networkConfig.IsWireless = value; }
+        }
+
+        public bool IsNetworkManualConfig
+        {
+            get => IsNetworkCapable && !IsDHCPEnabled;
+        }
+
+        public bool IsNetworkCapable => GetIsNetworkCapable();
+              
         public Command UpdateSelected { get; set; }
 
         
@@ -201,15 +244,21 @@ namespace NetduinoDeploy
                 else
                     networkConfig = new NetworkConfig();
 
-                MacAddress = BitConverter.ToString(networkConfig.NetworkMacAddress).Replace('-', ':');
-                Status = string.Format("Device settings can be saved {0} more time{1}", settings.FreeSlots, settings.FreeSlots > 1 ? "s" : "");
+                var optSettings = new OtpManager().GetOtpSettings();
+                MacAddress = BitConverter.ToString(optSettings.MacAddress).Replace('-', ':');
 
-                //lazy but probably about right
-                RaiseAllPropertiesChanged();
+                Status = string.Format("Device settings can be saved {0} more time{1}", settings.FreeSlots, settings.FreeSlots > 1 ? "s" : "");
             }
             else
             {
-                App.SendConsoleMessage("No conected devices found");
+                if (deviceCount == 0)
+                {
+                    App.SendConsoleMessage("Please connect a Netduino device in bootloader mode and restart the application");
+                }
+                else if (deviceCount > 1)
+                {
+                    App.SendConsoleMessage("Please connect only one Netduino device in bootloader mode and restart the application");
+                }
 
                 networkConfig = new NetworkConfig() { IsWireless = false, NetworkMacAddress = null };
 
@@ -335,19 +384,50 @@ namespace NetduinoDeploy
 
         void OnCommitSettings()
         {
-            var settings = new OtpSettings();
+            var address = MacAddress;
+            if (ValidateMacAddress(ref address) == false)
+            {
+                App.SendConsoleMessage("Invalid MAC Address, unable to update");
+                return;
+            }
+            else
+            {
+                MacAddress = address;
+            }
 
-            settings.ProductID = Convert.ToByte(Globals.DeviceTypes.SingleOrDefault(x => x.Name == SelectedDevice).ProductID);
-            settings.MacAddress = MacAddress.Split(':').Select(x => Convert.ToByte(x, 16)).ToArray();
+            var settings = new OtpSettings
+            {
+                ProductID = Convert.ToByte(Globals.DeviceTypes.SingleOrDefault(x => x.Name == SelectedDevice).ProductID),
+                MacAddress = MacAddress.Split(':').Select(x => Convert.ToByte(x, 16)).ToArray()
+            };
 
             var manager = new OtpManager();
-            manager.SaveOtpSettings(settings);
+
+            manager.StatusUpdated += Manager_StatusUpdated;
+            
+            if (manager.SaveOtpSettings(settings))
+                App.SendConsoleMessage("Settings updated succesfully");
+            else
+                App.SendConsoleMessage("Unable to update device settings");
+
+            manager.StatusUpdated += Manager_StatusUpdated;
+
         }
 
-        bool ValidateMacAddress(string macAddress)
+        private void Manager_StatusUpdated(object sender, string e)
         {
-            var result = _macAddressRegex.Match(macAddress);
+            App.SendConsoleMessage(e);
+        }
 
+        bool ValidateMacAddress(ref string macAddress)
+        {
+            if (macAddress.Length == 12)
+            {
+                for (int i = 10; i > 1; i -= 2)
+                    macAddress = macAddress.Insert(i, ":");
+            }
+
+            var result = _macAddressRegex.Match(macAddress);
             return result.Success;
         }
 
@@ -382,6 +462,25 @@ namespace NetduinoDeploy
             }
 
             CanSave = (device != null) ? device.HasMacAddress : false;
+        }
+
+        bool GetIsNetworkCapable()
+        {
+            if (networkConfig == null || 
+                networkConfig.NetworkMacAddress == null)
+                return false;
+
+            bool isCapable = false;
+
+            for (int i = 0; i < networkConfig.NetworkMacAddress.Length; i++)
+            {   //check for default (all 255)
+                if (networkConfig.NetworkMacAddress[i] != 255)
+                {
+                    isCapable = true;
+                    break;
+                }
+            }
+            return isCapable;
         }
 
     }

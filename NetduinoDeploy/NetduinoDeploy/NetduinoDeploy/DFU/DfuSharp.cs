@@ -285,16 +285,16 @@ namespace DfuSharp
 		{
 			this.interface_descriptor = interface_descriptor;
 			this.dfu_descriptor = dfu_descriptor;
+
 			if (NativeMethods.libusb_open(device, ref handle) < 0)
 				throw new Exception("Error opening device");
 		}
 
 		public event UploadingEventHandler Uploading;
 
-		protected virtual void OnUploading(UploadingEventArgs e)
+		protected virtual void RaiseUploadingEvent(int count)
 		{
-			if (Uploading != null)
-				Uploading(this, e);
+            Uploading?.Invoke(this, new UploadingEventArgs(count));
 		}
 		public void ClaimInterface()
 		{
@@ -389,7 +389,7 @@ namespace DfuSharp
 						Thread.Sleep(100);
 						status = GetStatus(handle, interface_descriptor.bInterfaceNumber);
 					}
-					OnUploading(new UploadingEventArgs(count));
+					RaiseUploadingEvent(count);
 				}
 			}
 			finally

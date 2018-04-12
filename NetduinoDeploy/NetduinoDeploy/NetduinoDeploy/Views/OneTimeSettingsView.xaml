@@ -8,7 +8,7 @@
                 Grid.Row="0" Grid.Column="2" />
         <Label Text="MAC Address:" 
                 Grid.Row="1" Grid.Column="0" />
-        <Entry x:Name="entryMacAddress" Text="{Binding MacAddress}" IsEnabled="{Binding CanSave}"
+        <Entry x:Name="entryMacAddress" Text="{Binding MacAddress}" IsEnabled="{Binding IsNetworkCapable}"
                 Grid.Row="1" Grid.Column="2" />
         <Label x:Name="lblStatus" Text="{Binding Status}" 
                 Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" />

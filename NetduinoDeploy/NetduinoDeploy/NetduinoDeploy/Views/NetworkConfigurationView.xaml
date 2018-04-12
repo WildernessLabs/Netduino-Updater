@@ -4,16 +4,16 @@
              x:Class="NetduinoDeploy.NetworkConfigurationView">
     <Grid Margin="10" RowSpacing="2" ColumnSpacing="10">
         <Label Text="Static IP Address:" />
-        <Entry x:Name="entryIPAddress" Text="{Binding StaticIPAddress}" IsEnabled="{Binding IsNetworkCapable}"
+        <Entry x:Name="entryIPAddress" Text="{Binding StaticIPAddress}" IsEnabled="{Binding IsNetworkManualConfig}"
                Grid.Column="1"/>
         <Label Text="Subnet Mask:" 
                Grid.Column="2" />
-        <Entry x:Name="entrySubnetMask" Text="{Binding SubnetMask}" IsEnabled="{Binding IsNetworkCapable}"
+        <Entry x:Name="entrySubnetMask" Text="{Binding SubnetMask}" IsEnabled="{Binding IsNetworkManualConfig}"
                Grid.Column="3" />
 
         <Label Text="Default Gateway:" 
                Grid.Column="0" Grid.Row="1" />
-        <Entry x:Name="entryGateway" Text="{Binding DefaultGateway}" IsEnabled="{Binding IsNetworkCapable}"
+        <Entry x:Name="entryGateway" Text="{Binding DefaultGateway}" IsEnabled="{Binding IsNetworkManualConfig}"
                Grid.Column="1" Grid.Row="1" />
      <!--   <Label Text="Mac Address:"
                Grid.Column="2" Grid.Row="1" />
