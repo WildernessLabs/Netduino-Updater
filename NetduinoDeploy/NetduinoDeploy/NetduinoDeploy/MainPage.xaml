@@ -10,7 +10,7 @@
             <Grid Padding="10">
              <!-- <Button x:Name="btnRefresh" Text=" Refresh " HorizontalOptions="Start" VerticalOptions="Center" /> -->
                 <Label Text="Netduino Deploy" FontSize="Medium" HorizontalOptions="Center" />
-                <Label Text="2.0.2 beta" HorizontalOptions="Center" VerticalOptions="End" TextColor="#666666" Grid.Row="1" />
+                <Label Text="2.0.3 beta" HorizontalOptions="Center" VerticalOptions="End" TextColor="#666666" Grid.Row="1" />
                 <Image Source="wl_logo_sm.png" HorizontalOptions="End" WidthRequest="104" Grid.RowSpan="2"/>
             </Grid>
 

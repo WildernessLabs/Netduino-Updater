@@ -32,5 +32,7 @@ namespace NetduinoDeploy
         }
 
         public static int ConnectedDeviceId { get; set; } = -1;
+
+        public static Device ConnectedDevice => GetDeviceFromId(ConnectedDeviceId);
     }
 }

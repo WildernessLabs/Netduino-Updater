@@ -4,11 +4,11 @@
              x:Class="NetduinoDeploy.OneTimeSettingsView">
     <Grid Margin="10">
         <Label Text="Model:" />
-        <Picker x:Name="pickerModel" ItemsSource="{Binding Devices}" SelectedItem="{Binding SelectedDevice}" TextColor="#23ABE3" 
+        <Picker x:Name="pickerModel" ItemsSource="{Binding Devices}" SelectedItem="{Binding SelectedDevice}" TextColor="#23ABE3" IsEnabled="{Binding IsOneDeviceConnected}"
                 Grid.Row="0" Grid.Column="2" />
         <Label Text="MAC Address:" 
                 Grid.Row="1" Grid.Column="0" />
-        <Entry x:Name="entryMacAddress" Text="{Binding MacAddress}" IsEnabled="{Binding IsNetworkCapable}"
+        <Entry x:Name="entryMacAddress" Text="{Binding MacAddress}" IsEnabled="{Binding CanEditMacAddress}"
                 Grid.Row="1" Grid.Column="2" />
         <Label x:Name="lblStatus" Text="{Binding Status}" 
                 Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" />

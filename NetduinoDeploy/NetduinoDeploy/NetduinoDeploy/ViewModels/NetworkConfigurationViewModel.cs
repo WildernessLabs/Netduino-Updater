@@ -23,7 +23,7 @@ namespace NetduinoDeploy
             {
                 _selectedDevice = value;
                 ValidateDevice(_selectedDevice);
-                OnPropertyChanged("SelectedDevice");
+                OnPropertyChanged(nameof(SelectedDevice));
             }
         }
         string _selectedDevice;
@@ -42,18 +42,29 @@ namespace NetduinoDeploy
             set
             {
                 _canSave = value;
-                OnPropertyChanged("CanSave");
+                OnPropertyChanged(nameof(CanSave));
             }
         }
         bool _canSave = false;
 
+        public bool CanEditMacAddress
+        {
+            get => CanSave && _canEditMacAddress;
+            set
+            {
+                _canEditMacAddress = value;
+                OnPropertyChanged(nameof(CanEditMacAddress));
+            }
+        }
+        bool _canEditMacAddress = false;
+
+        public bool IsOneDeviceConnected => (DfuContext.Current?.GetDevices().Count == 1);
 
         public Command CommitSettingsSelected { get; set; }
 
-        Regex _macAddressRegex = new Regex("^ ([0 - 9A - Fa - f]{2}[:]){5}([0 - 9A - Fa - f]{2})$");
+        Regex _macAddressRegex = new Regex("^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$");
 
-        string ADD_DEVICE_TYPE = "[Select Device Type]";
-
+        const string ADD_DEVICE_TYPE = "[Select Device Type]";
 
         //network config
         public List<string> NetworkKeyTypes { get; set; } = new List<string> { "64-bit", "128-bit", "256-bit", "512-bit", "1024-bit", "2048-bit" };
@@ -208,7 +219,7 @@ namespace NetduinoDeploy
 
         NetworkConfig networkConfig;
 
-         static Lazy<NetworkConfigurationViewModel> Instance = new Lazy<NetworkConfigurationViewModel>();
+        static Lazy<NetworkConfigurationViewModel> Instance = new Lazy<NetworkConfigurationViewModel>();
 
         public static NetworkConfigurationViewModel GetInstance ()
         {
@@ -246,6 +257,8 @@ namespace NetduinoDeploy
 
                 var optSettings = new OtpManager().GetOtpSettings();
                 MacAddress = BitConverter.ToString(optSettings.MacAddress).Replace('-', ':');
+
+                CanSave = settings.FreeSlots > 0;
 
                 Status = string.Format("Device settings can be saved {0} more time{1}", settings.FreeSlots, settings.FreeSlots > 1 ? "s" : "");
             }
@@ -362,7 +375,7 @@ namespace NetduinoDeploy
             return (networkConfig.Radio & (int)radioType) != 0 ? true : false;
         }
 
-        void UpdateNetworkConfigRadio (MFWirelessConfiguration.RadioTypes type, bool isEnabled) //TODO!
+        void UpdateNetworkConfigRadio (MFWirelessConfiguration.RadioTypes type, bool isEnabled)
         {
             if (networkConfig == null)
                 return;
@@ -447,8 +460,10 @@ namespace NetduinoDeploy
 
                 SelectedDevice = deviceType.Name;
                 App.SendConsoleMessage($"Device connected: {deviceType.Name}");
-
-                CanSave = deviceType.HasMacAddress;
+            }
+            else
+            {
+                SelectedDevice = ADD_DEVICE_TYPE;
             }
         }
 
@@ -459,9 +474,15 @@ namespace NetduinoDeploy
             if (deviceName != ADD_DEVICE_TYPE && Globals.DeviceTypes.Count > 0)
             {
                 device = Globals.DeviceTypes.Single(x => x.Name == deviceName);
-            }
 
-            CanSave = (device != null) ? device.HasMacAddress : false;
+                CanSave = true;
+                CanEditMacAddress = device.HasMacAddress;
+            }
+            else
+            {
+                CanSave = false;
+                CanEditMacAddress = false;
+            }
         }
 
         bool GetIsNetworkCapable()
