@@ -1,9 +1,13 @@
-﻿using Xamarin.Forms;
+﻿using System.Collections.Generic;
+using Xamarin.Forms;
 
 namespace NetduinoDeploy
 {
 	public partial class App : Application
 	{
+        static List<string> consoleMessageQueue = new List<string>();
+        static bool isUiReady = false;
+
 		public App ()
 		{
     		InitializeComponent();
@@ -11,24 +15,41 @@ namespace NetduinoDeploy
 			MainPage = new NetduinoDeploy.MainPage();
 		}
 
-        public static void SendConsoleMessage(string logEntry)
+        public static void SendConsoleMessage(string consoleMessage)
         {
-            MessagingCenter.Send(App.Current, "Console", logEntry);
+            if (isUiReady)
+            {
+                if(consoleMessageQueue.Count > 0)
+                {
+                    foreach (var msg in consoleMessageQueue)
+                        MessagingCenter.Send(Current, "Console", msg);
+
+                    consoleMessageQueue.Clear();
+                }
+
+                MessagingCenter.Send(Current, "Console", consoleMessage);
+            }
+            else
+            {
+                consoleMessageQueue.Add(consoleMessage);
+            }
         }
 
         protected override void OnStart ()
 		{
-			// Handle when your app starts
+            isUiReady = true;
 		}
 
 		protected override void OnSleep ()
 		{
-			// Handle when your app sleeps
-		}
+            // Handle when your app sleeps
+            isUiReady = false;
+        }
 
 		protected override void OnResume ()
 		{
-			// Handle when your app resumes
-		}
+            // Handle when your app resumes
+            isUiReady = true;
+        }
 	}
 }
