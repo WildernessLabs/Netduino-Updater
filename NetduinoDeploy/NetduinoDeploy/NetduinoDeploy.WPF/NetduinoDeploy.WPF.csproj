@@ -80,7 +80,7 @@
       <HintPath>..\..\packages\Xamarin.Forms.3.0.0.354232-pre3\lib\netstandard2.0\Xamarin.Forms.Platform.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Forms.Platform.WPF, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Xamarin.Forms.Platform.WPF.3.0.0.296286-pre2\lib\net45\Xamarin.Forms.Platform.WPF.dll</HintPath>
+      <HintPath>..\..\packages\Xamarin.Forms.Platform.WPF.3.0.0.354232-pre3\lib\net45\Xamarin.Forms.Platform.WPF.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Forms.Xaml, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xamarin.Forms.3.0.0.354232-pre3\lib\netstandard2.0\Xamarin.Forms.Xaml.dll</HintPath>
