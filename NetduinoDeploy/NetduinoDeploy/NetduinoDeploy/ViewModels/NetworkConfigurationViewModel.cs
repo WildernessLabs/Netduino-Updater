@@ -183,8 +183,16 @@ namespace NetduinoDeploy
 
         public string NetworkKey
         {
-            get => networkConfig?.NetworkKey;
-            set { if (networkConfig != null) networkConfig.NetworkKey = value; }
+            get
+            {
+                if (networkConfig != null & networkConfig.NetworkKey.Length > 50)
+                    return networkConfig.NetworkKey.Substring(0, 50) + "...";
+                return networkConfig?.NetworkKey ?? string.Empty;
+            }
+            set
+            {
+                if (networkConfig != null) networkConfig.NetworkKey = value;
+            }
         }
 
         public string ReKeyInterval

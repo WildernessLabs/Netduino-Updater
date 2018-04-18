@@ -13,7 +13,7 @@
 
         <Label Text="Manually Install Firmware:"
                Grid.Row="1 "/>
-        <Button x:Name="btnChoose" Text="Choose" Command="{Binding ChooseSelected}"
+        <Button x:Name="btnChoose" Text="Browse" Command="{Binding BrowseSelected}"
                 Grid.Row="1" Grid.Column="2"/>
 
         <Label Text="Config File:" 

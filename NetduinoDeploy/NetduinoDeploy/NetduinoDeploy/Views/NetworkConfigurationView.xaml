@@ -2,9 +2,9 @@
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NetduinoDeploy.NetworkConfigurationView">
-    <Grid Margin="10" RowSpacing="2" ColumnSpacing="10">
+    <Grid Margin="10" RowSpacing="2" ColumnSpacing="10" >
         <Label Text="Static IP Address:" />
-        <Entry x:Name="entryIPAddress" Text="{Binding StaticIPAddress}" IsEnabled="{Binding IsNetworkManualConfig}"
+        <Entry x:Name="entryIPAddress" Text="{Binding StaticIPAddress}" IsEnabled="{Binding IsNetworkManualConfig}" 
                Grid.Column="1"/>
         <Label Text="Subnet Mask:" 
                Grid.Column="2" />
@@ -89,7 +89,7 @@
                Grid.Column="0" Grid.Row="8" />
         <Picker x:Name="pickerNetworkKey" ItemsSource="{Binding NetworkKeyTypes}"  SelectedItem="{Binding SelectedNetworkKeyType}"  IsEnabled="{Binding IsWireless}"
                Grid.Column="1" Grid.Row="8" />
-        <Entry x:Name="entryNetworkKey" Placeholder="Network Key Value" Text="{Binding NetworkKey}" IsEnabled="{Binding IsWireless}"
+        <Entry x:Name="entryNetworkKey" Placeholder="Network Key Value" Text="{Binding NetworkKey}" IsEnabled="{Binding IsWireless}" 
                Grid.Column="2" Grid.Row="8" Grid.ColumnSpan="2" />
 
         <Label Text="Re-key Interval:" 

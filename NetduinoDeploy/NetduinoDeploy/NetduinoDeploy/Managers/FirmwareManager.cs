@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using DfuSharp;
 
 namespace NetduinoDeploy.Managers
@@ -13,10 +12,7 @@ namespace NetduinoDeploy.Managers
 		public FirmwareManager()
 		{ }
 
-		private double CurrentProgress
-		{
-			get => Math.Round((eraseProgress + uploadProgress) / 2, 0);
-		}
+		private double currentProgress => Math.Round((eraseProgress + uploadProgress) / 2, 0);
 
 		private double eraseProgress = 0;
 		private double uploadProgress = 0;
@@ -24,18 +20,20 @@ namespace NetduinoDeploy.Managers
 
 		private List<Firmware> LoadFirmwareFiles()
 		{
-			List<Firmware> results = new List<Firmware>();
+			var results = new List<Firmware>();
 
 			// find all folders containing firmware
 			string appPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-			string firmwareRootFolder = Path.Combine(appPath, "Netduino", "Firmware");
-			List<string> firmwareFolders = Directory.GetDirectories(firmwareRootFolder, "*.*", SearchOption.AllDirectories).ToList<string>();
-			firmwareFolders.Add(firmwareRootFolder); // be sure to search the root firmware folder, in case the user only has one firmware option.
+            string firmwareRootFolder = Path.Combine(appPath, "Netduino", "Firmware");
+
+            var firmwareFolders = Directory.GetDirectories(firmwareRootFolder, "*.*", SearchOption.AllDirectories).ToList<string>();
+
+            firmwareFolders.Add(firmwareRootFolder); // be sure to search the root firmware folder, in case the user only has one firmware option.
 
 			// enumerate the firmware in each folder
-			foreach (string firmwareFolder in firmwareFolders)
+			foreach (var folder in firmwareFolders)
 			{
-				string[] firmwareFiles = Directory.GetFiles(firmwareFolder, "*.xml");
+				string[] firmwareFiles = Directory.GetFiles(folder, "*.xml");
 				foreach (string firmwareFile in firmwareFiles)
 				{
 					try
@@ -43,27 +41,21 @@ namespace NetduinoDeploy.Managers
 						Firmware firmware = new Firmware(firmwareFile);
 						results.Add(firmware);
 					}
-					catch
-					{
-					}
+					catch { }
 				}
 			}
-
 			return results;
 		}
 
-		public Task EraseAndUploadDevice(int deviceIndex, int productID, string configPath, string flashPath, string bootFile)
+		public void EraseAndUploadDevice(int deviceIndex, int productID, string configPath, string flashPath, string bootFile)
 		{
 			int uploadedByteCount = 0;
 			int totalBytes = 0;
 
-
 			var devices = DfuContext.Current.GetDevices();
 
 			if (devices.Count == 0)
-			{
 				throw new Exception("Device not found");
-			}
 
 			DfuDevice device = devices[deviceIndex];
 			device.ClaimInterface();
@@ -77,21 +69,20 @@ namespace NetduinoDeploy.Managers
 			{
 				device.EraseSector((int)sector);
 				eraseProgress = (sectorCount + 1) * 100 / deviceConfig.Sectors.Count();
-				Debug.WriteLine(CurrentProgress.ToString());
-                RaiseFirmwareUpdateProgress(CurrentProgress.ToString());
+				Debug.WriteLine(currentProgress.ToString());
+                RaiseFirmwareUpdateProgress(currentProgress.ToString());
 				sectorCount++;
 			}
 
 			// get bytes for progress
-
-			using (System.IO.StreamReader streamReader = new System.IO.StreamReader(configPath))
+			using (var streamReader = new StreamReader(configPath))
 			{
 				string hexFileString = streamReader.ReadToEnd();
 				byte[] hexFileBytes = SrecHexEncoding.GetBytes(hexFileString, deviceConfig.ConfigBaseAddress);
 				totalBytes += hexFileBytes.Length;
 			}
 
-			using (System.IO.StreamReader streamReader = new System.IO.StreamReader(flashPath))
+			using (var streamReader = new StreamReader(flashPath))
 			{
 				string hexFileString = streamReader.ReadToEnd();
 				byte[] hexFileBytes = SrecHexEncoding.GetBytes(hexFileString, deviceConfig.FlashBaseAddress);
@@ -99,8 +90,7 @@ namespace NetduinoDeploy.Managers
 			}
 
 			// load tinybooter
-
-			using (System.IO.StreamReader streamReader = new System.IO.StreamReader(bootFile))
+			using (var streamReader = new StreamReader(bootFile))
 			{
 				string hexFileString = streamReader.ReadToEnd();
 				byte[] hexFileBytes = SrecHexEncoding.GetBytes(hexFileString, bootloaderBaseAddress);
@@ -111,12 +101,13 @@ namespace NetduinoDeploy.Managers
 			{
 				uploadedByteCount += e.BytesUploaded;
 				uploadProgress = uploadedByteCount * 100 / totalBytes;
-				Debug.WriteLine(CurrentProgress.ToString());
-                RaiseFirmwareUpdateProgress(CurrentProgress.ToString());
+
+				Debug.WriteLine(currentProgress.ToString());
+                RaiseFirmwareUpdateProgress(currentProgress.ToString());
 			};
 
 			// load config
-			using (System.IO.StreamReader streamReader = new System.IO.StreamReader(configPath))
+			using (var streamReader = new StreamReader(configPath))
 			{
 				string hexFileString = streamReader.ReadToEnd();
 				byte[] hexFileBytes = SrecHexEncoding.GetBytes(hexFileString, deviceConfig.ConfigBaseAddress);
@@ -124,7 +115,7 @@ namespace NetduinoDeploy.Managers
 			}
 
 			// load flash
-			using (System.IO.StreamReader streamReader = new System.IO.StreamReader(flashPath))
+			using (var streamReader = new StreamReader(flashPath))
 			{
 				string hexFileString = streamReader.ReadToEnd();
 				byte[] hexFileBytes = SrecHexEncoding.GetBytes(hexFileString, deviceConfig.FlashBaseAddress);
@@ -137,7 +128,6 @@ namespace NetduinoDeploy.Managers
 
 			//// leave DFU mode.
 			////device.LeaveDfuMode();
-			return Task.CompletedTask;
 		}
 
 		public void EraseAndUploadDevice(int deviceIndex, byte productID)
@@ -148,13 +138,9 @@ namespace NetduinoDeploy.Managers
 			List<Firmware> firmwares = LoadFirmwareFiles();
 			Firmware firmware = firmwares.SingleOrDefault(x => x.ProductID == productID);
 
-
 			var devices = DfuContext.Current.GetDevices();
 
-			if (devices.Count == 0)
-			{
-				throw new Exception("Device not found");
-			}
+			if (devices.Count == 0) throw new Exception("Device not found");
 
 			DfuDevice device = devices[deviceIndex];
 			device.ClaimInterface();
@@ -164,7 +150,7 @@ namespace NetduinoDeploy.Managers
 			// TODO: make sure we are in DFU mode; if we are in app mode (runtime) then we need to detach and re-enumerate.
 
 			// get our total sectors and block counts
-			List<uint> allSectorBaseAddresses = new List<uint>();
+			var allSectorBaseAddresses = new List<uint>();
 			foreach (Firmware.FirmwareRegion region in firmware.FirmwareRegions)
 			{
 				allSectorBaseAddresses.AddRange(region.SectorBaseAddresses);
@@ -175,8 +161,8 @@ namespace NetduinoDeploy.Managers
 			{
 				device.EraseSector((int)allSectorBaseAddresses[iSector]);
 				eraseProgress = (iSector + 1) * 100 / allSectorBaseAddresses.Count();
-				Debug.WriteLine(CurrentProgress.ToString());
-				RaiseFirmwareUpdateProgress($"{CurrentProgress}%");
+				Debug.WriteLine(currentProgress.ToString());
+				RaiseFirmwareUpdateProgress($"{currentProgress}%");
 			}
 
 			device.Uploading += (sender, e) =>
@@ -184,8 +170,8 @@ namespace NetduinoDeploy.Managers
 				uploadedByteCount += e.BytesUploaded;
                 uploadedByteCount = Math.Min(uploadedByteCount, totalBytes); //ensure it doesn't exceed 100%
 				uploadProgress = uploadedByteCount * 100 / totalBytes;
-				Debug.WriteLine(CurrentProgress.ToString());
-                RaiseFirmwareUpdateProgress($"{CurrentProgress}%");
+				Debug.WriteLine(currentProgress.ToString());
+                RaiseFirmwareUpdateProgress($"{currentProgress}%");
             };
 
 			for (int i = 0; i < firmware.FirmwareRegions.Count; i++)
@@ -220,7 +206,7 @@ namespace NetduinoDeploy.Managers
 			device.SetAddress(0x08000001); // NOTE: for thumb2 instructinos, we added 1 to the "base address".  Otherwise our board will not restart properly.
 			RaiseFirmwareUpdateProgress("Update Complete");
 
-			//                                    // leave DFU mode.
+			//// leave DFU mode.
 			////device.LeaveDfuMode();
 		}
 
