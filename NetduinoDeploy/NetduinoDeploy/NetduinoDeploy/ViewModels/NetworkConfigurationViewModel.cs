@@ -264,7 +264,9 @@ namespace NetduinoDeploy
                     networkConfig = new NetworkConfig();
 
                 var optSettings = new OtpManager().GetOtpSettings();
-                MacAddress = BitConverter.ToString(optSettings.MacAddress).Replace('-', ':');
+
+                if(networkConfig.NetworkMacAddress != null)
+                    MacAddress = BitConverter.ToString(optSettings.MacAddress).Replace('-', ':');
 
                 CanSave = settings.FreeSlots > 0;
 
