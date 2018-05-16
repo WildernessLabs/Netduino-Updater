@@ -49,9 +49,12 @@ namespace NetduinoUpdate
 
         bool _hideOneOtpSlot = true;
 
+        MACAddressService _macAddresses = new MACAddressService();
+
         public MainWindow()
         {
             InitializeComponent();
+            //_macAddresses.WriteAddresses(0x60d7e3a00000, 1048576);
         }
 
         public void RegisterForPnpEvents()
@@ -148,12 +151,24 @@ namespace NetduinoUpdate
                             return;
                         }
                         /* BEGIN: ADD THIS IN IF WE WANT TO AUTO-SET OUR OTP PRODUCT ID EN MASSE */
-                        //if (otpSlotsFree > 2)
-                        //{
-                        //    otpSettings.WriteSettings(9 /* productID: Netduino3Wifi */, macAddress);
-                        //    success = otpSettings.ReadSettings(out productID, out macAddress, out otpSlotsFree);
-                        //    if (!success) return;
-                        //}
+                        if (otpSlotsFree > 2)
+                        {
+                            otpSettings.ReadSettings(out productID, out macAddress, out otpSlotsFree);
+                            if (productID == 0)
+                            {
+                                // 9=Netduino3Wifi
+                                // 8=Netduino3Ethernet
+                                // 5=NetduinoPlus2
+                                // 7=Netduino3
+                                // 6=Netduino2
+
+                                otpSettings.WriteSettings(9, _macAddresses.GetNextAddress());
+                                //otpSettings.WriteSettings(6, macAddress);
+                            }
+
+                            success = otpSettings.ReadSettings(out productID, out macAddress, out otpSlotsFree);
+                            if (!success) return;
+                        }
                         /* END: ADD THIS IN IF WE WANT TO AUTO-SET OUR OTP PRODUCT ID EN MASSE */
 
                         // by default, we hide one OTP slot.  This is so that users cannot accidentally use up all slots--and have one final chance to change the cnofiguration.

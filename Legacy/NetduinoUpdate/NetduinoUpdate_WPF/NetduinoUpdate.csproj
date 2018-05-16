@@ -58,6 +58,7 @@
       <DependentUpon>DeviceOptionsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Firmware.cs" />
+    <Compile Include="MACAddressService.cs" />
     <Compile Include="OtpSettings.cs" />
     <Compile Include="SrecHexEncoding.cs" />
     <Compile Include="STDFU.cs" />
