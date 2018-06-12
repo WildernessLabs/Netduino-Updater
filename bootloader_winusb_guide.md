@@ -25,7 +25,9 @@ The steps in this guide were tested on Windows 10 64-bit but should work on Wind
 ## Notes
 All current Netduino boards will use the same bootloader driver. The driver update will affect any Netduino connected to your PC.
 
-This only replaces the bootloader driver. The default driver will still be used during development.
+This only replaces the bootloader driver. The MFUSB_Netduino.sys driver provided by the installer will still be used when the Netduino is in "normal" or "development" mode.
+
+Major Windows 10 updates may update/replace the driver assigned to the Netduion bootloader. If you're unable to connect to your Netduino in bootloader mode, repeat the steps above.
 
 ### To restore the original bootloader driver
 1. Connect your device bootloader mode
