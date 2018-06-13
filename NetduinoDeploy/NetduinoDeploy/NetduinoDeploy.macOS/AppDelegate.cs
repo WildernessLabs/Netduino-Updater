@@ -36,5 +36,11 @@ namespace NetduinoDeploy.macOS
         {
             // Insert code here to tear down your application
         }
+
+        [Export("applicationShouldTerminateAfterLastWindowClosed:")]
+        public bool ApplicationShouldTerminateAfterLastWindowClosed(NSApplication sender)
+        {
+            return true;
+        }
     }
 }
