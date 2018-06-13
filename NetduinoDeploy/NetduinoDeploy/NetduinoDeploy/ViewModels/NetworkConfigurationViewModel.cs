@@ -183,8 +183,16 @@ namespace NetduinoDeploy
 
         public string NetworkKey
         {
-            get => networkConfig?.NetworkKey;
-            set { if (networkConfig != null) networkConfig.NetworkKey = value; }
+            get
+            {
+                if (networkConfig != null & networkConfig.NetworkKey.Length > 50)
+                    return networkConfig.NetworkKey.Substring(0, 30) + "...";
+                return networkConfig?.NetworkKey ?? string.Empty;
+            }
+            set
+            {
+                if (networkConfig != null) networkConfig.NetworkKey = value;
+            }
         }
 
         public string ReKeyInterval
@@ -256,7 +264,9 @@ namespace NetduinoDeploy
                     networkConfig = new NetworkConfig();
 
                 var optSettings = new OtpManager().GetOtpSettings();
-                MacAddress = BitConverter.ToString(optSettings.MacAddress).Replace('-', ':');
+
+                if(networkConfig.NetworkMacAddress != null)
+                    MacAddress = BitConverter.ToString(optSettings.MacAddress).Replace('-', ':');
 
                 CanSave = settings.FreeSlots > 0;
 

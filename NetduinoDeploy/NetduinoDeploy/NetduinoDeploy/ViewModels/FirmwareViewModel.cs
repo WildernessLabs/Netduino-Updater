@@ -1,5 +1,6 @@
 ﻿using NetduinoDeploy.Managers;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -12,7 +13,7 @@ namespace NetduinoDeploy
 
         public string ConfigFile
         {
-            get => GetDisplayString(_configFile, maxFileStringLen);
+            get => Path.GetFileName(_configFile);
             set
             {
                 _configFile = value;
@@ -24,7 +25,7 @@ namespace NetduinoDeploy
 
         public string FlashFile
         {
-            get => GetDisplayString(_flashFile, maxFileStringLen);
+            get => Path.GetFileName(_flashFile);
             set
             {
                 _flashFile = value;
@@ -35,7 +36,7 @@ namespace NetduinoDeploy
 
         public string BootFile
         {
-            get => GetDisplayString(_bootFile, maxFileStringLen);
+            get => Path.GetFileName(_bootFile);
             set
             {
                 _bootFile = value;
@@ -50,7 +51,7 @@ namespace NetduinoDeploy
         }
 
         public Command InstallSelected { get; set; }
-        public Command ChooseSelected { get; set; }
+        public Command BrowseSelected { get; set; }
         public Command DeploySelected { get; set; }
 
         FirmwareDownloadManager firmwareDownloader;
@@ -65,8 +66,8 @@ namespace NetduinoDeploy
             firmwareTask = firmwareDownloader.DownloadFirmware();
 
             InstallSelected = new Command(OnInstall, OnCanInstall);
-            ChooseSelected = new Command(OnChoose, OnCanChoose);
-            DeploySelected = new Command(OnDeploy, OnCanDeploy);
+            BrowseSelected = new Command(OnBrowse, ()=> true);
+            DeploySelected = new Command(OnDeployFirmware, OnCanDeploy);
 
             InitUI();
         }
@@ -87,16 +88,6 @@ namespace NetduinoDeploy
             }
 
             RaiseAllPropertiesChanged();
-        }
-
-        string GetDisplayString(string text, int maxLength)
-        {
-            if (string.IsNullOrWhiteSpace(text))
-                return text;
-
-            if (text.Length <= maxLength)
-                return text;
-            return "..." + text.Substring(text.Length - maxLength);
         }
 
         async void OnInstall ()
@@ -128,7 +119,7 @@ namespace NetduinoDeploy
             return (Globals.ConnectedDeviceId != -1);
         }
 
-        void OnChoose ()
+        void OnBrowse ()
         {
             //move to dependency service later 
             IOpenFileDialog dialog = GetFileDialog();
@@ -141,12 +132,18 @@ namespace NetduinoDeploy
             {
                 if (dialog.FileNames.SingleOrDefault(x => x.ToLower().Contains("er_config")) != null)
                     ConfigFile = dialog.FileNames.SingleOrDefault(x => x.ToLower().Contains("er_config"));
+                else
+                    App.SendConsoleMessage("You must include an ER_CONFIG file to update the firmware");
 
                 if (dialog.FileNames.SingleOrDefault(x => x.ToLower().Contains("er_flash")) != null)
                     FlashFile = dialog.FileNames.SingleOrDefault(x => x.ToLower().Contains("er_flash"));
+                else
+                    App.SendConsoleMessage("You must include an ER_FLASH file to update the firmware");
 
                 if (dialog.FileNames.SingleOrDefault(x => x.ToLower().Contains("tinybooter")) != null)
                     BootFile = dialog.FileNames.SingleOrDefault(x => x.ToLower().Contains("tinybooter"));
+                else
+                    App.SendConsoleMessage("You must include an Tiny Booter file to update the firmware");
             }
 
             DeploySelected.ChangeCanExecute();
@@ -163,12 +160,7 @@ namespace NetduinoDeploy
 #endif
         }
 
-        bool OnCanChoose()
-        {
-            return true;
-        }
-
-        async void OnDeploy ()
+        async void OnDeployFirmware ()
         {
             var firmwareManager = new FirmwareManager();
 
@@ -179,7 +171,7 @@ namespace NetduinoDeploy
 
             try
             {
-                await firmwareManager.EraseAndUploadDevice(0, (byte)Globals.ConnectedDeviceId, _configFile, _flashFile, _bootFile);
+                await Task.Run (()=> firmwareManager.EraseAndUploadDevice(0, (byte)Globals.ConnectedDeviceId, _configFile, _flashFile, _bootFile));
                 App.SendConsoleMessage("Firmware update successful");
             }
             catch (Exception e)
