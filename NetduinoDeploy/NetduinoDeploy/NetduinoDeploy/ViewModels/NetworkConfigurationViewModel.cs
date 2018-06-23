@@ -209,7 +209,7 @@ namespace NetduinoDeploy
 
         public bool IsWireless
         {
-            get => (networkConfig == null)?false:networkConfig.IsWireless;
+            get => (networkConfig == null) ? false : networkConfig.IsWireless;
             set { if (networkConfig != null) networkConfig.IsWireless = value; }
         }
 
@@ -259,9 +259,17 @@ namespace NetduinoDeploy
                 networkManager = new NetworkManager();
 
                 if (settings.ProductID > 0)
+                {
                     LoadNetworkSettings();
+
+                    if (settings.ProductID == 9 && networkConfig.IsWireless == false)
+                        networkConfig.IsWireless = true; //hack for N3W that get into a bad state
+
+                }
                 else
+                {
                     networkConfig = new NetworkConfig();
+                }
 
                 var optSettings = new OtpManager().GetOtpSettings();
 
